@@ -1,0 +1,189 @@
+\documentclass[12pt,a4]{article}
+\usepackage[ngerman]{babel}
+\usepackage{bibgerm}
+\usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{tikz}
+
+\title{\textbf{Proseminar\\Künstliche neuronale Netze}}
+\author{Jens Ostertag}
+\date{\today}
+
+\renewcommand*\contentsname{Inhaltsverzeichnis}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\clearpage
+\section{Computer lernen lassen}
+\enquote{Künstliche Intelligenz}, \enquote{Maschinelles Lernen} und \enquote{Neuronale Netze} - Alle diese Begriffe sind gewissermaßen miteinander verbunden, denn ihre Technik beruht darauf, dass Computer lernen können.
+
+Bei einem künstlichen neuronalen Netz handelt es sich um die Simulation des menschlichen neuronalen Netzes, einer Struktur, die im Gehirn vorhanden ist. Sogenannte \enquote{Neuronen} (Nervenzellen) sind durch Synapsen miteinander verbunden, welche den Elektronenfluss zwischen zwei Neuronen mithilfe eines \enquote{Synapsengewichts} regeln. Dadurch lässt sich die Anfälligkeit eines Neurons auf die Elektronen des vorhergehenden Neurons verändern. \cite{Synapsengewicht}
+
+Maschinelles Lernen beschreibt das Lernen eines solchen neuronales Netzes. Wie auch der Mensch sind künstliche neuronale Netze dazu in der Lage, die unterschiedlichsten Dinge zu lernen. Das geschieht durch die Anpassung der zuvor genannten Synapsengewichte, im Folgenden bei künstlichen Netzen auch nur \enquote{Gewichte} genannt.\\
+Somit ist es neuronalen Netzen möglich, beispielsweise Muster in Bildern erkennen zu lernen und somit bestimmte Objekte voneinander unterscheiden zu können (Bildklassifizierung).
+
+Die künstliche Intelligenz ist die undefinierteste Form neuronaler Netze, was hauptsächlich damit zusammenhängt, dass es keine sehr genaue Definition von Intelligenz gibt. Ist man intelligent, wenn man schnell rechnen kann? Somit ist bereits ein simpler Taschenrechner von vor 40 Jahren äußerst intelligent. Oder bedeutet Intelligenz, dass man eigentständig denken und fühlen können muss? Wegen dieser Undefiniertheit wird im Folgenden auf den Begriff der künstlichen Intelligenz verzichtet.
+
+Obwohl die Theorie bereits länger existiert, erfolgte ein großer Vorsprung in der Entwicklung des maschinellen Lernens erst in den letzten Jahren. Auch wenn es zuerst nicht so scheint, kommt heute jeder täglich damit in Berührung, beispielsweise
+\begin{itemize}
+\item im Verkehr, durch schlau gesteuerte Ampelphasen oder nahezu selbstfahrende Autos sowie Assistenzsysteme wie Spurhalteassistenten, Einparkhilfen oder Ähnliches,
+\item im Internet, wo jedem im Sekundentakt neue Inhalte vorgeschlagen werden,
+\item im medizinischen Bereich, wo Bilderkennung bei der Auswertung bildgebender Verfahren hilft,
+\item in der Industrie, wo Produktionsabläufe durch maschinelles Lernen optimiert wurden.
+\end{itemize}
+
+Im Folgenden soll es darum gehen, wie maschinelles Lernen funktioniert und wie man es für seine Ziele verwenden kann.
+\clearpage
+\subsection{Aufbau eines einfachen neuronalen Netzes \cite{NeuronaleNetzeImKlartext}}
+\begin{figure}[!h]
+\centering
+\begin{tikzpicture}[thick, main/.style={draw, circle, inner sep=0pt, minimum width=25pt}]
+\node[main, fill=red!25] (i1) at (0, 0.75) {};
+\node[main, fill=red!25] (i2) at (0, 2.25) {};  
+\node[main, fill=red!25] (i3) at (0, 3.75) {};
+\node[main, fill=red!25] (i4) at (0, 5.25) {};
+
+\node[main, fill=blue!25] (h11) at (3, 0) {};  
+\node[main, fill=blue!25] (h12) at (3, 1.5) {};
+\node[main, fill=blue!25] (h13) at (3, 3) {};
+\node[main, fill=blue!25] (h14) at (3, 4.5) {};
+\node[main, fill=blue!25] (h15) at (3, 6) {};
+
+\node[main, fill=blue!25] (h21) at (6, 0) {};  
+\node[main, fill=blue!25] (h22) at (6, 1.5) {};
+\node[main, fill=blue!25] (h23) at (6, 3) {};
+\node[main, fill=blue!25] (h24) at (6, 4.5) {};
+\node[main, fill=blue!25] (h25) at (6, 6) {};
+
+\node[main, fill=green!35] (o1) at (9, 1.5) {};
+\node[main, fill=green!35] (o2) at (9, 3) {};
+\node[main, fill=green!35] (o3) at (9, 4.5) {};
+
+\draw[-] (i1) -- (h11);\draw[-] (i1) -- (h12);\draw[-] (i1) -- (h13);\draw[-] (i1) -- (h14);\draw[-] (i1) -- (h15);
+
+\draw[-] (i2) -- (h11);\draw[-] (i2) -- (h12);\draw[-] (i2) -- (h13);\draw[-] (i2) -- (h14);\draw[-] (i2) -- (h15);
+
+\draw[-] (i3) -- (h11);\draw[-] (i3) -- (h12);\draw[-] (i3) -- (h13);\draw[-] (i3) -- (h14);\draw[-] (i3) -- (h15);
+
+\draw[-] (i4) -- (h11);\draw[-] (i4) -- (h12);\draw[-] (i4) -- (h13);\draw[-] (i4) -- (h14);\draw[-] (i4) -- (h15);
+
+\draw[-] (h11) -- (h21);\draw[-] (h11) -- (h22);\draw[-] (h11) -- (h23);\draw[-] (h11) -- (h24);\draw[-] (h11) -- (h25);
+
+\draw[-] (h12) -- (h21);\draw[-] (h12) -- (h22);\draw[-] (h12) -- (h23);\draw[-] (h12) -- (h24);\draw[-] (h12) -- (h25);
+
+\draw[-] (h13) -- (h21);\draw[-] (h13) -- (h22);\draw[-] (h13) -- (h23);\draw[-] (h13) -- (h24);\draw[-] (h13) -- (h25);
+
+\draw[-] (h14) -- (h21);\draw[-] (h14) -- (h22);\draw[-] (h14) -- (h23);\draw[-] (h14) -- (h24);\draw[-] (h14) -- (h25);
+
+\draw[-] (h15) -- (h21);\draw[-] (h15) -- (h22);\draw[-] (h15) -- (h23);\draw[-] (h15) -- (h24);\draw[-] (h15) -- (h25);
+
+\draw[-] (o1) -- (h21);\draw[-] (o1) -- (h22);\draw[-] (o1) -- (h23);\draw[-] (o1) -- (h24);\draw[-] (o1) -- (h25);
+
+\draw[-] (o2) -- (h21);\draw[-] (o2) -- (h22);\draw[-] (o2) -- (h23);\draw[-] (o2) -- (h24);\draw[-] (o2) -- (h25);
+
+\draw[-] (o3) -- (h21);\draw[-] (o3) -- (h22);\draw[-] (o3) -- (h23);\draw[-] (o3) -- (h24);\draw[-] (o3) -- (h25);
+\end{tikzpicture}
+\caption{Aufbau eines einfachen neuronalen Netzes}
+\end{figure}
+Die kleinste Einheit eines neuronalen Netzes ist ein Neuron. Dabei wird zwischen Eingabe- (rot), Ausgabe- (grün) und verstecktem (blau) Neuron unterschieden. Da die Neuronen jedoch nicht strukturlos angeordnet sein sollen, werden sie zu Schichten zusammengefasst. Somit ergeben sich dann Eingabe-, Ausgabe- und versteckte Schichten. 
+
+Während die Funktion der Ein- und Ausgabeschicht trivial ist, nämlich das Eingeben eines Eingabevektors und das Auslesen des ermittelten Ausgabevektors, ist die Funktion von versteckten Schichten etwas komplexer.
+
+Sie werden benötigt, da eine einzelne Schicht nur linear separierbare Funktionen anwenden könnte. Klassifikationen wären damit nahezu unmöglich. Im Umkehrschluss gilt: Je mehr versteckte Schichten es gibt, umso kompliziertere Dinge kann das Netz lernen, das ist allerdings auch mit einem höheren Zeitaufwand verbunden.
+
+Die Neuronen sind, wie zuvor genannt, mit Synapsen verbunden. Das Synapsengewicht bestimmt im künstlichen Fall, welcher Anteil des Wertes des vorherigen Neurons in das folgende Neuron \enquote{propagiert} (weitergeleitet) wird. Das ermöglicht, dass wie im dargestellten vollständigen neuronalen Netz einzelne Neuronen gegenüber anderen unsensibler oder sensitiver werden.
+
+\subsection{Drei Arten des maschinellen Lernens \cite{PythonMachineLearningChapter1}}
+Die Gewichtsanpassung eines neuronalen Netzes, also sein Lernprozess, wird auch Training genannt. Dieses kann auf drei unterschiedliche Arten erfolgen.
+
+\subsubsection{Überwachtes Lernen}
+Das überwachte Lernen ist die wohl am häufigsten Verwendete Methode, ein neuronales Netz zu trainieren. Es zielt darauf ab, anhand einer bislang unbekannten Eingabe eine passende Ausgabe zu ermitteln. Das soll mithilfe von in der Eingabe enthaltenen Mustern geschehen, die im Trainingsvorgang angelernt werden sollen.
+
+Man benötigt eine Menge an Eingaben, von denen jede mit einer erwarteten Ausgabe versehen ist. Die Eingaben werden hintereinander an das Netz angelegt, wodurch zu jeder eine reelle Ausgabe erzeugt wird. Abhängig von der Differenz erwarteter und reeller Ausgabe werden die Gewichte des Netzes angepasst.
+
+\subsubsection*{Anwendung: Klassifikation von Daten}
+Am häufigsten findet das überwachte Lernen Anwendung in der Erkennung und Wiedererkennung, bzw. Klassifikation von Daten.
+
+Ein neuronales Netz wird mit einem repräsentativen Datensatz trainiert, der in unterschiedliche Klassen eingeteilt ist. Jede Eingabe ist mit einer zugehörigen Klasse versehen. Ziel ist es, dass das Netz nicht nur alle Eingaben des Datensatzes korrekt zuordnet, sondern wegen deren Repräsentativität auch alle anderen Daten in eine passende Klasse einteilt.
+
+Das geschieht, indem das neuronale Netz zwischen den Klassen Grenzen zieht, um zu definieren, ab welchem Punkt eine Eingabe zur vorherigen oder zur nächsten Klasse zugeordnet werden muss.
+
+\begin{figure}[!h]
+\centering
+\begin{tikzpicture}
+\draw[->] (0, 0) -- (0, 5);
+\draw[->] (0, 0) -- (5, 0);
+
+\foreach \i in {1, ..., 15} {
+	\node[red!50] at (3.75 + 1.25*rand, 3.75 + 1.25*rand) {•};
+	\node[blue!50] at (1.15 + rand, 2.5 + 2.25*rand) {•};
+	\node[green!50] at (3.75 + 1.25*rand, 1.25 + rand) {•};
+}
+
+\draw[dotted] (2.25, 0) -- (2.25, 5);
+\draw[dotted] (2.25, 2.45) -- (5, 2.45);
+\end{tikzpicture}
+\caption{Einteilung von Eingaben in Klassen durch Grenzen}
+\end{figure}
+
+\subsubsection{Unüberwachtes Lernen}
+Das Ziel des unüberwachten Lernens ist es, innerhalb einer Menge von Eingaben Gruppen anhand ähnlicher Strukturen zu finden. Dafür wird keine Bearbeitung oder Sortierung der Daten benötigt.
+
+\subsubsection*{Anwendung: Gruppierung von Daten}
+Unüberwachtes Lernen ist besonders interessant für die Clusteranalyse, die genau das Ziel verfolgt, anhand ähnlicher Daten Gruppen mit jeweils ähnlichen Eigenschaften zu bilden. Sie spielt besonders im Internet eine Rolle, wo unterschiedlichen Zielgruppen unterschiedliche Inhalte, Produktvorschläge oder Werbungen angezeigt werden sollen.
+
+\begin{figure}[!h]
+\centering
+\begin{tikzpicture}
+\draw[->] (0, 0) -- (0, 5);
+\draw[->] (0, 0) -- (5, 0);
+
+\foreach \i in {1, ..., 15} {
+	\node[red!50] at (3.75 + .9*rand, 3.75 + .9*rand) {•};
+	\node[blue!50] at (1.5 + .9*rand, 1.5 + .9*rand) {•};
+	\node[green!50] at (4 + .6*rand, 1 + .6*rand) {•};
+}
+
+\draw[dotted] (3.75, 3.75) circle (1.3);
+\draw[dotted] (1.5, 1.5) circle (1.3);
+\draw[dotted] (4, 1) circle (1);
+\end{tikzpicture}
+\caption{Einteilung von Daten in Kategorien}
+\end{figure}
+
+\subsubsection{Bestärktes Lernen}
+Bestärktes Lernen dient dazu, den Entscheidungsprozess eines neuronales Netzes bezüglich einer bestimmten Tätigkeit zu trainieren.
+
+Dabei wird mit Belohnungen gearbeitet: Je besser eine Ausgabe war, umso höher ist die Belohnung für das Netz, was darin resultiert, dass die jeweilige Entscheidung verstärkt wird. Entschied sich das Netz falsch, ist die Belohnung gering und die Entscheidung wird geschwächt. Während des Lernvorgangs wird stets versucht, die Belohnung zu maximieren, um immer die bestmögliche Ausgabe zu erreichen.
+
+Wegen den Belohnungen kann man beim bestärkten Lernen auch von einer Art des überwachten Lernens sprechen.
+
+\subsection{Umgang mit neuronalen Netzen \cite{PythonMachineLearningChapter1}}
+
+
+\subsubsection{Vorbereiten eines Trainingsdatensatzes}
+
+\subsubsection{Trainieren des neuronalen Netzes}
+
+\subsubsection{Auswertung und Anwendung}
+
+\subsection{Programmiersprachen zur Entwicklung neuronaler Netze \cite{PythonMachineLearningChapter1}}
+Ein neuronales Netz kann in jeder beliebigen Programmiersprache entwickelt werden. Am beliebtesten ist jedoch Python, da es über eine große Nutzerbasis und viele Bibliotheken in Bezug auf maschinelles Lernen verfügt, insbesondere Google's TensorFlow zum Trainieren tiefer neuronaler Netze.
+
+Ich persönlich bevorzuge jedoch Java, was weniger an Vor- oder Nachteilen liegt, sondern an persönlichen Präferenzen und Programmiererfahrungen.
+
+\section{Einfache Lernalgorithmen für einzelne Neuronen \cite{PythonMachineLearningChapter2}}
+
+\section{Entwicklung eines neuronalen Netzes \cite{PythonMachineLearningChapter12}}
+
+\section{Bildklassifikation mit tiefen neuronalen Netzen \cite{PythonMachineLearningChapter15}}
+
+\section{Resultate}
+
+\bibliographystyle{gerplain}
+\bibliography{refs}
+\end{document}
