@@ -101,22 +101,18 @@ Die Neuronen sind, wie zuvor genannt, mit Synapsen verbunden. Das Synapsengewich
 Die Gewichtsanpassung eines neuronalen Netzes, also sein Lernprozess, wird auch Training genannt. Dieses kann auf drei unterschiedliche Arten erfolgen.
 
 \subsubsection{Überwachtes Lernen}
-Das überwachte Lernen ist die wohl am häufigsten Verwendete Methode, ein neuronales Netz zu trainieren. Es zielt darauf ab, anhand einer bislang unbekannten Eingabe eine passende Ausgabe zu ermitteln. Das soll mithilfe von in der Eingabe enthaltenen Mustern geschehen, die im Trainingsvorgang angelernt werden sollen.
+Das überwachte Lernen ist die wohl am häufigsten verwendete Methode, ein neuronales Netz zu trainieren. Es zielt darauf ab, auch zu bislang unbekannten Eingaben eine passende Ausgabe zu generieren, meistens geht es darum, die Eingaben in Gruppen bestimmter Eigenschaften einzuteilen. 
 
-Man benötigt eine Menge an Eingaben, von denen jede mit einer erwarteten Ausgabe versehen ist. Die Eingaben werden hintereinander an das Netz angelegt, wodurch zu jeder eine reelle Ausgabe erzeugt wird. Abhängig von der Differenz erwarteter und reeller Ausgabe werden die Gewichte des Netzes angepasst.
-
-\subsubsection*{Anwendung: Klassifikation von Daten}
-Am häufigsten findet das überwachte Lernen Anwendung in der Erkennung und Wiedererkennung, bzw. Klassifikation von Daten.
-
-Ein neuronales Netz wird mit einem repräsentativen Datensatz trainiert, der in unterschiedliche Klassen eingeteilt ist. Jede Eingabe ist mit einer zugehörigen Klasse versehen. Ziel ist es, dass das Netz nicht nur alle Eingaben des Datensatzes korrekt zuordnet, sondern wegen deren Repräsentativität auch alle anderen Daten in eine passende Klasse einteilt.
-
-Das geschieht, indem das neuronale Netz zwischen den Klassen Grenzen zieht, um zu definieren, ab welchem Punkt eine Eingabe zur vorherigen oder zur nächsten Klasse zugeordnet werden muss.
+Dafür wird während des Trainingsvorgangs mithilfe eines Trainingsdatensatzes (einige Eingaben mit zugehörigen erwarteten Ausgaben) angelernt, welche Muster in Eingabedaten zu bestimmten Ausgaben gehören. Erhält das Netz nach abgeschlossenem Training eine Eingabe, ist es in der Lage, ein Muster darin zu erkennen und anhand dessen eine passende Ausgabe zu generieren.
 
 \begin{figure}[!h]
 \centering
 \begin{tikzpicture}
 \draw[->] (0, 0) -- (0, 5);
 \draw[->] (0, 0) -- (5, 0);
+
+\node at (2.5, -.25) {$x$};
+\node at (-.25, 2.5) {$y$};
 
 \foreach \i in {1, ..., 15} {
 	\node[red!50] at (3.75 + 1.25*rand, 3.75 + 1.25*rand) {•};
@@ -127,14 +123,15 @@ Das geschieht, indem das neuronale Netz zwischen den Klassen Grenzen zieht, um z
 \draw[dotted] (2.25, 0) -- (2.25, 5);
 \draw[dotted] (2.25, 2.45) -- (5, 2.45);
 \end{tikzpicture}
-\caption{Einteilung von Eingaben in Klassen durch Grenzen}
+\caption{Klassifizierung von Daten}
 \end{figure}
+
+In Abbildung 2 entsprechen alle Punkte einer bestimmten Eingabe, gleichfarbige Punkte haben dieselbe erwartete Ausgabe. Während des Trainings lernt das Netz beispielsweise, dass es für Eingaben mit hohem $x$- und niedrigem $y$-Wert die Ausgabe grüner Punkte generieren soll.
 
 \subsubsection{Unüberwachtes Lernen}
 Das Ziel des unüberwachten Lernens ist es, innerhalb einer Menge von Eingaben Gruppen anhand ähnlicher Strukturen zu finden. Dafür wird keine Bearbeitung oder Sortierung der Daten benötigt.
 
-\subsubsection*{Anwendung: Gruppierung von Daten}
-Unüberwachtes Lernen ist besonders interessant für die Clusteranalyse, die genau das Ziel verfolgt, anhand ähnlicher Daten Gruppen mit jeweils ähnlichen Eigenschaften zu bilden. Sie spielt besonders im Internet eine Rolle, wo unterschiedlichen Zielgruppen unterschiedliche Inhalte, Produktvorschläge oder Werbungen angezeigt werden sollen.
+Daher ist diese Lernart besonders interessant für die Clusteranalyse, welche dasselbe Ziel anstrebt. Sie spielt besonders im Internet eine Rolle, wo unterschiedliche Zielgruppen unterschiedliche Inhalte, Produktvorschläge oder Werbungen angezeigt bekommen sollen.
 
 \begin{figure}[!h]
 \centering
@@ -152,24 +149,46 @@ Unüberwachtes Lernen ist besonders interessant für die Clusteranalyse, die gen
 \draw[dotted] (1.5, 1.5) circle (1.3);
 \draw[dotted] (4, 1) circle (1);
 \end{tikzpicture}
-\caption{Einteilung von Daten in Kategorien}
+\caption{Gruppierung von Daten}
 \end{figure}
+
+In Abbildung 3 entsprechen sind alle Punkte unterschiedliche Daten, gleichfarbige Punkte haben jedoch ähnliche Eigenschaften. Das neuronale Netz soll diese Ähnlichkeiten erkennen und die Punkte gleicher Farbe jeweils in die gleiche Kategorie einteilen.
 
 \subsubsection{Bestärktes Lernen}
 Bestärktes Lernen dient dazu, den Entscheidungsprozess eines neuronales Netzes bezüglich einer bestimmten Tätigkeit zu trainieren.
 
 Dabei wird mit Belohnungen gearbeitet: Je besser eine Ausgabe war, umso höher ist die Belohnung für das Netz, was darin resultiert, dass die jeweilige Entscheidung verstärkt wird. Entschied sich das Netz falsch, ist die Belohnung gering und die Entscheidung wird geschwächt. Während des Lernvorgangs wird stets versucht, die Belohnung zu maximieren, um immer die bestmögliche Ausgabe zu erreichen.
 
-Wegen den Belohnungen kann man beim bestärkten Lernen auch von einer Art des überwachten Lernens sprechen.
+Die Belohnungen sind hierbei eine Art Feedback für das Netz, weshalb man auch von einer Art des überwachten Lernens sprechen kann.
+
+\subsection{Begriffskonventionen}
+\begin{itemize}
+\item \textbf{Gewichte}: Synapsengewichte zwischen einzelnen Neuronen, welche die Anfälligkeit eines Neurons auf ein vorheriges Neuron steuern
+\item \textbf{Training}: Lernvorgang; Prozess, in dem eine Anpassung der Gewichte des neuronalen Netzes stattfindet
+\end{itemize}
 
 \subsection{Umgang mit neuronalen Netzen \cite{PythonMachineLearningChapter1}}
-
+Vor der Implementation maschinellen Lernens in einem Programm muss ein neuronales Netz entwickelt werden, das die gewünschte Aufgabe zuverlässig erledigen kann. Für die einzelnen Lernarten existieren standardisierte Abläufe, die von Netz zu Netz nahezu gleich sind. Im Folgenden wird der des überwachten Lernens vorgestellt.
 
 \subsubsection{Vorbereiten eines Trainingsdatensatzes}
+Zuerst müssen Daten gesammelt und zu einem Trainingsdatensatz zusammengefügt werden.
+Bei allen Daten handelt es sich um mögliche Eingaben für das Netz. Sollen also beispielsweise Bilder von unterschiedlichen Objekten unterschieden werden, sind die Daten ebenfalls Bilder, auf denen jeweils eines der zu klassifizierenden Objekte enthalten ist.
 
-\subsubsection{Trainieren des neuronalen Netzes}
+Neben dem einfachen Zusammenstellen des Datensatzes kann es jedoch auch vorkommen, dass Daten zuerst bearbeitet werden müssen, sodass einzelne Details auffälliger sind. Das kann geschehen, indem zum Beispiel ein Bild auf die relevanten Pixel reduziert wird. Dadurch lernt das Netz nicht nur besser, sondern auch schneller und mit einer geringeren Datenmenge als würden Daten nicht optimiert werden.
+
+Sämtliche Anpassungen der Daten müssen einheitlich und auch bei der Anwendung des Netzes mit unbekannten Daten erfolgen.
+
+Außerdem ist es für die bevorstehende Auswertung wichtig, dass ebenfalls ein Testdatensatz erstellt wird. Sein Aufbau ist gleich wie der des Trainingsdatensatzes, es sind lediglich andere Daten enthalten. 
+
+\subsubsection{Trainieren}
+Mit dem fertigen Trainingsdatensatz kann das neuronale Netz trainiert werden. Dafür existieren unterschiedliche Trainingsalgorithmen, die sich auch zwischen besonderen Aufbauten neuronaler Netze und deren spezifischen Aufgaben unterscheiden können. 
+
+Welcher der Algorithmen der Beste für die jeweilige Aufgabe ist, kann nicht pauschal beantwortet werden, sondern es sollte einzeln mit Bezug darauf getestet werden, welcher Algorithmus am besten abschneidet.
 
 \subsubsection{Auswertung und Anwendung}
+Nachdem das Training abgeschlossen wurde, ist es interessant zu wissen, mit welcher Genauigkeit oder Zuverlässigkeit eine Aufgabe ausgeführt wird. Dafür kommt der zuvor erstellte Testdatensatz in Einsatz, mit dem die Anzahl der falschen bzw. unerwünschten Ausgaben ermittelt wird und der somit eine Einschätzung des Netzes möglich macht.
+
+Wenn die Aufgabe zufriedenstellend abgeschlossen wird, werden die Gewichte und die Konfiguration des Netzes in Dateien abgespeichert und in einem Anwendungsprogramm importiert. Das ermöglicht eine Rekonstruktion des neuronalen Netzes ohne großen Zeitaufwand und ohne erneut ein Training durchführen zu müssen.
 
 \subsection{Programmiersprachen zur Entwicklung neuronaler Netze \cite{PythonMachineLearningChapter1}}
 Ein neuronales Netz kann in jeder beliebigen Programmiersprache entwickelt werden. Am beliebtesten ist jedoch Python, da es über eine große Nutzerbasis und viele Bibliotheken in Bezug auf maschinelles Lernen verfügt, insbesondere Google's TensorFlow zum Trainieren tiefer neuronaler Netze.
