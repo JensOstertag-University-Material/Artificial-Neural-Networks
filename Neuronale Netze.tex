@@ -239,27 +239,21 @@ Nachdem das Training abgeschlossen wurde, ist es interessant zu wissen, mit welc
 Wenn die Aufgabe zufriedenstellend abgeschlossen wird, können die Gewichte und die Konfiguration des Netzes in Dateien abgespeichert und in einem Anwendungsprogramm importiert. Das ermöglicht eine Rekonstruktion des neuronalen Netzes ohne großen Zeitaufwand und ohne erneut ein Training durchführen zu müssen.
 
 \section{Deep Convolutional Neural Networks \cite{PythonMachineLearningChapter15}}
-Deep Convolutional Neural Networks sind besondere Formen der neuronalen Netze, die besonders in der Bilderkennung und -Klassifikation sehr häufig verwendet werden. Grund dafür ist, dass sie viel schneller und besser trainiert werden können als herkömmliche neuronale Netze. Während diese eine Genauigkeit von über 80\% nur selten erreichen, können Deep Convolutional Neural Networks Bilder meist problemlos über 95\% der Bilder korrekt klassifizieren.
+Deep Convolutional Neural Networks sind besondere Formen der neuronalen Netze, die besonders in der Bilderkennung und -Klassifikation sehr häufig verwendet werden. Grund dafür ist, dass sie viel schneller und besser trainiert werden können als herkömmliche neuronale Netze. Während diese eine Genauigkeit von über 80\% erst nach mehreren Trainingsepochen erreichen, lernen Deep Convolutional Neural Networks innerhalb weniger Epochen ein Bild mit einer Wahrscheinlichkeit von über 95\% korrekt zu klassifizieren.
 
 Das ist auf deren Aufbau und Lernweise zurückzuführen, welche der des Menschen noch mehr ähnelt als die herkömmlicher neuronaler Netze.
 
 \subsection{Convolutional Layer}
-Verwendet man ein übliches neuronales Netz für die Bildklassifikation, ist die Relevanz zweier nebeneinanderliegender Pixel genauso hoch wie die von weit entfernten Pixeln. Das folgt daraus, dass die Ausgabe jedes Neurons an jedes Neuron in der folgenden Schicht propagiert wird.
+Verwendet man ein übliches neuronales Netz für die Bildklassifikation, ist die Relevanz zweier nebeneinanderliegender Pixel genauso hoch wie die von weit entfernten Pixeln. Das folgt daraus, dass die Ausgabe jedes Neurons an jedes Neuron der Folgeschicht propagiert wird.
 
-In einem Convolutional Layer ist das anders: Mithilfe eines Filters werden aus nebeneinanderliegenden Pixeln Eigenschaften erkannt. In den ersten Schichten des Netzes beschränken sich diese Eigenschaften auf Kanten und andere einfache Formen, je tiefer sich eine Schicht jedoch im Netz befindet, kann diese immer komplexere Objekte anhand von Konturen unterscheiden.
+In einem Convolutional Layer ist das anders: Mithilfe eines \enquote{Kernels} werden aus nebeneinanderliegenden Pixeln Eigenschaften erkannt. Erkennbare Eigenschaften beschränken sich in den höheren Schichten auf einfache Formen wie zum Beispiel Kanten, je tiefer sich eine Schicht jedoch im Netz befindet, kann diese immer komplexere Objekte anhand von Konturen unterscheiden.
 
-Um dies zu erreichen, wird die Convolution oder die Cross Correlation angewandt.
+Um das zu erreichen, wird die Convolution, oder eine Vereinfachung, die häufiger in Machine-Learning-Frameworks implementiert ist, die Cross Correlation, angewandt.
 
 \subsubsection{Eindimensionale Cross Correlation}
-Als \enquote{Cross Correlation} wird im Folgenden eine Operation mit zwei Vektoren $x$ und $w$ betrachtet, aus dem ein weiterer Vektor $y$ berechnet werden soll. Sie stellt eine wichtige Grundlage der Convolutional Neural Networks dar, die sogenannte \enquote{Convolutional Layer} enthalten. Außerdem ist sie eine Vereinfachung der Convolution, welche selbst nur in wenigen Machine-Learning-Frameworks implementiert ist. Der Unterschied besteht zwischen der Handhabung der Vektoren, die bei der Convolution in alle Dimensionen gespiegelt sind. Im Anwendungsfall mit einem Algorithmus ist dieser Effekt allerdings vernachlässigbar.
+Als \enquote{Cross Correlation} wird im Folgenden eine Operation mit einem Eingabevektor $x$ und einem Kernel $w$ betrachtet, aus dem ein Ausgabevektor $y$ berechnet werden soll. Die Cross Correlation ist eine Vereinfachung der Convolution, wobei der Unterschied im Wesentlichen darin besteht, dass der Kernel bei der Convolution zuerst gespiegelt werden muss.
 
-Unter Definition der Variablen
-\begin{itemize}
-\item $x$: Eingabevektor
-\item $w$: Filter (vergleichbar mit Gewichtsvektor)
-\item $y$: Ausgabevektor
-\end{itemize}
-mit den Bedingungen
+Mit der Bedingung
 \[
 |x| \geq |w| \qquad |x|, \: |w| > 0
 \]
@@ -267,13 +261,14 @@ kann die valide Cross Correlation im eindimensionalen Raum (folgend $\odot$) mat
 \begin{equation}
 y = x \odot w \quad \rightarrow \quad y_i = \sum\limits_{k=0}^{|w| - 1} x_{i+k} * w_{k}
 \end{equation}
-beschrieben werden. In Worten bedeutet das, dass der Filter $w$ an den Eingaben $x$ angelegt wird. Addiert man das Produkt der einzelnen Werte $x_i$ und $w_i$, ermittelt man $y_i$. Um $y_{i+1}$ zu berechnen, muss der Filtervektor um eine Einheit verschoben werden. Ein Sinnbild ist in Abbildung \ref{fig:CrossCorrelationNoPadding} dargestellt.
+beschrieben werden. In Worten bedeutet das, dass der Kernel $w$ an den Eingaben $x$ angelegt wird. Addiert man das Produkt der einzelnen Werte $x_i$ und $w_i$, ermittelt man $y_i$. Um $y_{i+1}$ zu berechnen, muss der Kernel um eine Einheit verschoben werden. Ein Sinnbild ist in Abbildung \ref{fig:CrossCorrelationNoPadding} dargestellt.
 
 \begin{figure}[!h]
 \centering
 \begin{tikzpicture}[thick, main/.style={draw, rectangle, inner sep=0pt, minimum width=1cm, minimum height=1cm}]
 \node at (-1.5, .25) {$x$};
 \node[text=blue!50] at (-1, -.25) {$w$};
+\node at (-.5, -2.5) {$y$};
 
 \node[main] at (0, 0) {};
 \node[main] at (1, 0) {};
@@ -319,13 +314,14 @@ $\qquad$
 \label{fig:CrossCorrelationNoPadding}
 \end{figure}
 
-Dabei ist offensichtlich, dass die Länge der Ausgabe stets kleiner als die Länge der Eingabe ist. Aus diesem Grund wird ein \enquote{Padding} eingeführt, welches den Eingabevektor $x$ künstlich mit Nullen erweitern soll. Zur Ermittlung des Ausgabevektors $y$ entsteht das in Abbildung \ref{fig:CrossCorrelationWithPadding} dargestellte Schema.
+Es ist offensichtlich, dass die Länge des Ausgabevektors $y$ unter diesen Bedingungen stets kleiner als die Länge der Eingabe sein wird. Ein solcher Informationsverlust von Pixeln kann jedoch zu Ungenauigkeiten führen. Daher wird ein \enquote{Padding} eingeführt, welches den Eingabevektor $x$ künstlich mit Nullen erweitern soll. Zur Ermittlung des Ausgabevektors $y$ entsteht das in Abbildung \ref{fig:CrossCorrelationWithPadding} dargestellte Schema. Man spricht nun nicht mehr von der validen Cross Correlation, sondern von einer Cross Correlation mit \enquote{Same Padding}, bei dem der Ausgabevektor $y$ dieselbe Länge hat wie der Eingabevektor $x$. Darüber hinaus existiert noch das \enquote{Full Padding}, bei dem der Eingabevektor $x$ mit noch mehr Nullen erweitert wird. Dadurch wird die Ausgabe nach einem Convolutional Layer größer als die Eingabe, wodurch allerdings eine Vergrößerung von Daten stattfindet. Der damit verbundene Rechenaufwand ist der Grund, weshalb das Full Padding selten Anwendung findet.
 
 \begin{figure}[!h]
 \centering
 \begin{tikzpicture}[thick, main/.style={draw, rectangle, inner sep=0pt, minimum width=1cm, minimum height=1cm}]
 \node at (-2.5, .25) {$x^p$};
 \node[text=blue!50] at (-2, -.25) {$w$};
+\node at (-1.5, -2.5) {$y$};
 
 \node[main, dotted] at (-1, 0) {$0$};
 \node[main] at (0, 0) {};
@@ -354,22 +350,28 @@ Dabei ist offensichtlich, dass die Länge der Ausgabe stets kleiner als die Län
 \label{fig:CrossCorrelationWithPadding}
 \end{figure}
 
-Somit wird ein Ausgabevektor $y$ erreicht, der dieselbe Länge hat wie der Eingabevektor $x$.
-
 \subsubsection{Zweidimensionale Cross Correlation}
-Bilder sind jedoch nicht eindimensional. Daher wird eine zweidimensionale Cross Correlation benötigt. Zwar lässt sie sich in Formeln durch
+Bilder sind allerdings nicht eindimensional, weshalb die zweidimensionale Cross Correlation benötigt wird. 
+
+Unter Definition der Variablen
+\begin{itemize}
+\item $X^p$: Eingabematrix ($\hat{=}$ Bild, einfarbig, mit Nullen erweitert)
+\item $W$: Kernel-Matrix
+\item $Y$: Ausgabematrix (Bild mit angewandtem Filter)
+\end{itemize}
+kann diese durch die Formel
 \begin{equation}
-Y = X \odot W \quad \rightarrow \quad Y_{i, j} = \sum\limits_{k=0}^{|W|} \; \sum\limits_{l=0}^{|W_l|} X_{i+k, j+l} * W_{k, j}
+Y = X \odot W \quad \rightarrow \quad Y_{i, j} = \sum\limits_{k=0}^{|W|} \; \sum\limits_{l=0}^{|W_l|} X^p_{i+k, j+l} * W_{k, j}
 \end{equation}
-beschreiben, anhand eines Schemas ist sie allerdings einfacher zu verstehen.
+beschrieben werden, anhand eines Schemas und Abbildung \ref{fig:CrossCorrelation2D} ist sie jedoch einfacher zu verstehen.
 
 \begin{figure}[!h]
 \centering
+\scalebox{.95}{
 \begin{tikzpicture}
 \node at (2.5, 1.5) {$X^p$};
 \node[text=blue!50] at (.75, 2) {$W$};
 \node at (9.5, 1) {$Y$};
-
 \draw[-] (0, 0) -- (5, -1) -- (5, -6) -- (0, -5) -- (0, 0);
 \draw[-] (0, -1) -- (5, -2);
 \draw[-] (0, -2) -- (5, -3);
@@ -379,7 +381,6 @@ beschreiben, anhand eines Schemas ist sie allerdings einfacher zu verstehen.
 \draw[-] (2, -.4) -- (2, -5.4);
 \draw[-] (3, -.6) -- (3, -5.6);
 \draw[-] (4, -.8) -- (4, -5.8);
-
 \draw[dotted] (-1, 1.2) -- (6, -.2) -- (6, -7.2) -- (-1, -5.8) -- (-1, 1.2);
 \draw[dotted] (0, 1) -- (0, -6);
 \draw[dotted] (1, .8) -- (1, -6.2);
@@ -393,7 +394,6 @@ beschreiben, anhand eines Schemas ist sie allerdings einfacher zu verstehen.
 \draw[dotted] (-1, -2.8) -- (6, -4.2);
 \draw[dotted] (-1, -3.8) -- (6, -5.2);
 \draw[dotted] (-1, -4.8) -- (6, -6.2);
-
 \node at (-.5, .6) {$0$};
 \node at (.5, .4) {$0$};
 \node at (1.5, .2) {$0$};
@@ -418,15 +418,12 @@ beschreiben, anhand eines Schemas ist sie allerdings einfacher zu verstehen.
 \node at (-.5, -2.4) {$0$};
 \node at (-.5, -1.4) {$0$};
 \node at (-.5, -.4) {$0$};
-
 \draw[-, draw=blue!35, line width=.75mm] (-.75, .95) -- (2.25, .35) -- (2.25, -2.65) -- (-.75, -2.05) -- (-.75, .95);
 \draw[-, draw=blue!35, line width=.75mm] (.25, .75) -- (.25, -2.25);
 \draw[-, draw=blue!35, line width=.75mm] (1.25, .55) -- (1.25, -2.45);
 \draw[-, draw=blue!35, line width=.75mm] (-.75, -.05) -- (2.25, -.65);
 \draw[-, draw=blue!35, line width=.75mm] (-.75, -1.05) -- (2.25, -1.65);
-
 \fill[fill=blue!25] (7, 0) -- (8, -.2) -- (8, -1.2) -- (7, -1);
-
 \draw[-] (7, 0) -- (12, -1) -- (12, -6) -- (7, -5) -- (7, 0);
 \draw[-] (7, -1) -- (12, -2);
 \draw[-] (7, -2) -- (12, -3);
@@ -436,23 +433,28 @@ beschreiben, anhand eines Schemas ist sie allerdings einfacher zu verstehen.
 \draw[-] (9, -.4) -- (9, -5.4);
 \draw[-] (10, -.6) -- (10, -5.6);
 \draw[-] (11, -.8) -- (11, -5.8);
-
 \draw[dashed, draw=blue!25, line width=.5mm] (-.75, .95) -- (7, 0);
 \draw[dashed, draw=blue!25, line width=.5mm] (2.25, .35) -- (8, -.2);
 \draw[dashed, draw=blue!25, line width=.5mm] (2.25, -2.65) -- (8, -1.2);
 \draw[dashed, draw=blue!25, line width=.5mm] (-.75, -2.05) -- (7, -1);
 \end{tikzpicture}
+}
 \caption{Cross Correlation im zweidimensionalen Raum}
+\label{fig:CrossCorrelation2D}
 \end{figure}
 
-Auch hier wird die Filtermatrix $W$ an die Eingabematrix $X$ angelegt und verschoben, um die Werte der Ausgabe $Y$ zu berechnen. Es ist jedoch zu beachten, dass $W$ nun nicht nur in eine, sondern in beide Dimensionen verschoben wird.
+Auch hier wird die Kernel-Matrix $W$ an die Eingabematrix $X^p$ angelegt und verschoben, um die Werte der Ausgabe $Y$ durch Addieren der Produkte zu berechnen. Es ist jedoch zu beachten, dass $W$ in diesem Fall in beide Richtungen verschoben wird, sodass eine zweidimensionale Ausgabe entsteht.
 
-Damit keine Pixel verloren werden, wird die Eingabe $X$ ebenfalls zu einem $X^p$ mit Padding erweitert.
+\subsubsection{Praktische Anwendung}
+In der Praxis muss ein Convolutional Layer mehrere zweidimensionale Matrizen annehmen können. Zum Einen können dadurch farbige Bilder verarbeitet werden, welche drei Farbkanäle (rot, grün und blau) haben. Diese werden zusammengefasst und als dreidimensionales Array in die Schicht gegeben. Dort wird für jeden Channel mit einem eigenen Kernel (in der Regel eine $3 \times 3$ oder $5 \times 5$-Matrix) eine Ausgabe berechnet, wobei jedoch zu beachten ist, dass nun auch ein Bias benötigt wird. Somit wird also auch die Ausgabe intern als dreidimensionales Array verarbeitet. 
 
-\subsubsection{Übersicht über Vorteile}
-Ein Convolutional Layer ist also eine Schicht in einem neuronalen Netz, die nur nebeneinanderliegende Pixel mit einem immer wiederkehrenden Filter (in der Regel eine $3 \times 3$ oder eine $5 \times 5$-Matrix) betrachtet und dadurch zunächst einfache Formen, nach wenigen dieser Schichten allerdings schon komplexere Konturen erkennen kann. Dadurch wird ebenfalls die absolute Position eines zu klassifizierenden Objekts innerhalb eines Bildes egal, da lediglich die Relativität von Formen zueinander eine Rolle spielen.
+Zu jedem Channel existiert mindestens eine Ausgabe $Y$, meistens sollen jedoch mehr berechnet werden. Das erfolgt, indem zum Beispiel zu einem RGB-Bild nicht nur drei, sondern Vielfache von 3, zweidimensionale Kernel-Matrizen existieren, die zu jeder Eingabematrix das Vielfache an Ausgaben zu berechnen. Um das jedoch besser zu strukturieren, wird der Kernel als vierdimensionale Matrix betrachtet mit der Höhe und  Breite, Anzahl an Eingaben und Anzahl an Ausgaben.
 
-Da die Schicht mit einem einheitlichen Filter mit etwa 9 bis 25 Gewichten auf Eigenschaften untersucht wird, gibt es auch wenige Variablen, die bei einem Trainingsvorgang verändert werden müssen, wodurch dieser wesentlich kürzer dauert als in einem vollständig verbundenen neuronalen Netz.
+Mit einer Ausgabe $Y$ allein ist jedoch noch nicht viel Anzufangen, da erst die bereits aus dem ersten Kapitel bekannte differenzierbare Aktivierungsfunktion angewandt werden muss. Es entsteht mit 
+\[
+A = \varphi (Y)
+\]
+eine sogenannte \enquote{Feature Map}. Diese enthalten in tieferen Schichten immer abstrakter werdende Eigenschaften der zu klassifizierenden Objekte.
 
 \subsection{Subsampling Layer}
 Subsampling Layers kommen in neuronalen Netzen vor, um die Menge an Eigenschaften einer Eingabe mittels Pooling-Operationen zu verringern. Das resultiert in einem deutlich schnelleren Trainingsvorgang, da nach einem Subsampling Layer weniger Gewichte angepasst werden müssen.
