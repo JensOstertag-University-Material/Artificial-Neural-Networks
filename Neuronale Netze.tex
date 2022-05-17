@@ -525,6 +525,111 @@ Nach Bedarf kann auch eine erneute Convolution mit Subsampling eingebaut werden,
 
 Nach der letzten Subsampling-Schicht müssen alle Ausgabematrizen abgeflacht werden (engl. \enquote{Flattening}).
 
+\begin{figure}[!h]
+\centering
+\begin{tikzpicture}[thick, main/.style={draw, circle, inner sep=0pt, minimum width=.25cm}]
+
+\def\lgt{1.5};
+\def\xo{0};
+\def\yo{0};
+\def\dst{.2};
+\draw[-] (0+\xo, 0+\yo) -- (0+\xo, \lgt+\yo) -- (\lgt+\xo, \lgt+\yo) -- (\lgt+\xo, 0+\yo) -- (0+\xo, 0+\yo);
+\foreach \n in {0, ..., 1} {
+\draw[-] (-\dst*\n+\xo, \dst*\n+\dst+\yo) -- (-\dst*\n-\dst+\xo, \dst*\n+\dst+\yo) -- (-\dst*\n-\dst+\xo, \dst*\n+\dst+\lgt+\yo) -- (-\dst*\n-\dst+\lgt+\xo, \dst*\n+\dst+\lgt+\yo) -- (-\dst*\n-\dst+\lgt+\xo, \dst*\n+\lgt+\yo);
+}
+
+\def\lgt{1.5};
+\def\xo{2.5};
+\def\yo{-.15};
+\def\dst{.1};
+\draw[-] (0+\xo, 0+\yo) -- (0+\xo, \lgt+\yo) -- (\lgt+\xo, \lgt+\yo) -- (\lgt+\xo, 0+\yo) -- (0+\xo, 0+\yo);
+\foreach \n in {0, ..., 6} {
+\draw[-] (-\dst*\n+\xo, \dst*\n+\dst+\yo) -- (-\dst*\n-\dst+\xo, \dst*\n+\dst+\yo) -- (-\dst*\n-\dst+\xo, \dst*\n+\dst+\lgt+\yo) -- (-\dst*\n-\dst+\lgt+\xo, \dst*\n+\dst+\lgt+\yo) -- (-\dst*\n-\dst+\lgt+\xo, \dst*\n+\lgt+\yo);
+}
+
+\def\lgt{1};
+\def\xo{5};
+\def\yo{.15};
+\def\dst{.1};
+\draw[-] (0+\xo, 0+\yo) -- (0+\xo, \lgt+\yo) -- (\lgt+\xo, \lgt+\yo) -- (\lgt+\xo, 0+\yo) -- (0+\xo, 0+\yo);
+\foreach \n in {0, ..., 6} {
+\draw[-] (-\dst*\n+\xo, \dst*\n+\dst+\yo) -- (-\dst*\n-\dst+\xo, \dst*\n+\dst+\yo) -- (-\dst*\n-\dst+\xo, \dst*\n+\dst+\lgt+\yo) -- (-\dst*\n-\dst+\lgt+\xo, \dst*\n+\dst+\lgt+\yo) -- (-\dst*\n-\dst+\lgt+\xo, \dst*\n+\lgt+\yo);
+}
+
+\def\lgt{1};
+\def\xo{7.5};
+\def\yo{-.05};
+\def\dst{.075};
+\draw[-] (0+\xo, 0+\yo) -- (0+\xo, \lgt+\yo) -- (\lgt+\xo, \lgt+\yo) -- (\lgt+\xo, 0+\yo) -- (0+\xo, 0+\yo);
+\foreach \n in {0, ..., 14} {
+\draw[-] (-\dst*\n+\xo, \dst*\n+\dst+\yo) -- (-\dst*\n-\dst+\xo, \dst*\n+\dst+\yo) -- (-\dst*\n-\dst+\xo, \dst*\n+\dst+\lgt+\yo) -- (-\dst*\n-\dst+\lgt+\xo, \dst*\n+\dst+\lgt+\yo) -- (-\dst*\n-\dst+\lgt+\xo, \dst*\n+\lgt+\yo);
+}
+
+\def\lgt{.65};
+\def\xo{9.5};
+\def\yo{.3};
+\def\dst{.05};
+\draw[-] (0+\xo, 0+\yo) -- (0+\xo, \lgt+\yo) -- (\lgt+\xo, \lgt+\yo) -- (\lgt+\xo, 0+\yo) -- (0+\xo, 0+\yo);
+\foreach \n in {0, ..., 14} {
+\draw[-] (-\dst*\n+\xo, \dst*\n+\dst+\yo) -- (-\dst*\n-\dst+\xo, \dst*\n+\dst+\yo) -- (-\dst*\n-\dst+\xo, \dst*\n+\dst+\lgt+\yo) -- (-\dst*\n-\dst+\lgt+\xo, \dst*\n+\dst+\lgt+\yo) -- (-\dst*\n-\dst+\lgt+\xo, \dst*\n+\lgt+\yo);
+}
+
+\node[main] (n00) at (11, 0) {};
+\node at (11, .7) {$\vdots$};
+\node[main] (n01) at (11, 1.2) {};
+\node[main] (n02) at (11, 1.6) {};
+\node[main] (n03) at (11, 2) {};
+
+\node[main] (n10) at (12, 0) {};
+\node at (12, .7) {$\vdots$};
+\node[main] (n11) at (12, 1.2) {};
+\node[main] (n12) at (12, 1.6) {};
+\node[main] (n13) at (12, 2) {};
+
+\node[main] (n20) at (13, .2) {};
+\node at (13, .9) {$\vdots$};
+\node[main] (n21) at (13, 1.4) {};
+\node[main] (n22) at (13, 1.8) {};
+
+\draw[-] (n00) -- (n10);
+\draw[-] (n00) -- (n11);
+\draw[-] (n00) -- (n12);
+\draw[-] (n00) -- (n13);
+\draw[-] (n01) -- (n10);
+\draw[-] (n01) -- (n11);
+\draw[-] (n01) -- (n12);
+\draw[-] (n01) -- (n13);
+\draw[-] (n02) -- (n10);
+\draw[-] (n02) -- (n11);
+\draw[-] (n02) -- (n12);
+\draw[-] (n02) -- (n13);
+\draw[-] (n03) -- (n10);
+\draw[-] (n03) -- (n11);
+\draw[-] (n03) -- (n12);
+\draw[-] (n03) -- (n13);
+\draw[-] (n10) -- (n20);
+\draw[-] (n10) -- (n21);
+\draw[-] (n10) -- (n22);
+\draw[-] (n11) -- (n20);
+\draw[-] (n11) -- (n21);
+\draw[-] (n11) -- (n22);
+\draw[-] (n12) -- (n20);
+\draw[-] (n12) -- (n21);
+\draw[-] (n12) -- (n22);
+\draw[-] (n13) -- (n20);
+\draw[-] (n13) -- (n21);
+\draw[-] (n13) -- (n22);
+
+\path[->, thick] (0.25, 2.1) edge[bend left] node[above, align=center] {\textbf{Convolution}\\Kernel-Größe:\\$8 \times 3 \times x \times y$} (2.5, 2.2);
+\path[->, thick] (3.5, -.3) edge[bend right] node[below, align=center] {\textbf{Subsampling}\\Pooling-Größe\\$2 \times 2$} (5.5, 0);
+\path[->, thick] (4.8, 2) edge[bend left] node[above, align=center] {\textbf{Convolution}\\Kernel-Größe:\\$16 \times 8 \times x' \times y'$} (6.7, 2.2);
+\path[->, thick] (8, -.2) edge[bend right] node[below, align=center] {\textbf{Subsampling}\\Pooling-Größe\\$2 \times 2$} (9.8, .1);
+\path[->, thick] (9.1, 1.9) edge[bend left] node[above, align=center] {\textbf{Flattening}} (10.8, 2.2);
+\end{tikzpicture}
+\caption{Aufbau eines Convolutional Neural Networks}
+\label{fig:CNNArchitecture}
+\end{figure}
+
 \section{Resultate}
 
 \bibliographystyle{gerplain}
