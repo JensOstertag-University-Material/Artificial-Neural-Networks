@@ -1,0 +1,532 @@
+\documentclass[12pt,a4]{article}
+\usepackage[ngerman]{babel}
+\usepackage{bibgerm}
+\usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+
+\title{\textbf{Proseminar\\Künstliche neuronale Netze}}
+\author{Jens Ostertag}
+\date{\today}
+
+\renewcommand*\contentsname{Inhaltsverzeichnis}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\clearpage
+\section{Computer lernen lassen}
+\enquote{Künstliche Intelligenz}, \enquote{Maschinelles Lernen} und \enquote{Neuronale Netze} - Alle diese Begriffe sind gewissermaßen miteinander verbunden, denn ihre Technik beruht darauf, dass Computer lernen können. Vor einem tieferen Einblick möchte ich diese Begriffe jedoch einordnen und differenzieren.
+
+Bei einem künstlichen neuronalen Netz handelt es sich um die Simulation des menschlichen bzw. natürlichen neuronalen Netzes, einer Struktur, die im Gehirn vorhanden ist. Neuronale Netze sind die Grundlage für alles, das Lernen kann oder Entscheidungen treffen soll.
+
+Maschinelles Lernen beschreibt das Lernen eines solchen neuronales Netzes. Wie auch der Mensch ist ein künstliches neuronales Netz in der Lage, sich unterschiedliche Fähigkeiten anzueignen, unabhängig von der Komplexität der jeweiligen Aufgabe. Dadurch wird beispielsweise ermöglicht, dass ein Programm Bilder erkennt und klassifiziert oder die Position bestimmter Objekte darin bestimmen kann.
+
+Die künstliche Intelligenz ist die undefinierteste Form neuronaler Netze, was auch damit zusammenhängt, dass es keine sehr genaue Definition von Intelligenz gibt. Ist man intelligent, wenn man schnell rechnen kann? Somit ist bereits ein simpler Taschenrechner von vor 40 Jahren äußerst intelligent. Oder bedeutet Intelligenz, dass man selbstständig denken und fühlen können muss, in dessen Zusammenhang der Begriff "Künstliche Intelligenz" auch meistens verwendet wird?
+Aufgrund dieser Undefiniertheit wird im Folgenden, sofern möglich, auf diesen Begriff verzichtet.
+
+Obwohl die Theorie schon etwas länger existiert, erfolgte ein großer Vorsprung in der Entwicklung des maschinellen Lernens erst in den letzten Jahren. Auch wenn es zuerst nicht so scheint, kommt heute jeder täglich damit in Berührung, beispielsweise
+\begin{itemize}
+\item im Verkehr, durch schlau gesteuerte Ampelphasen oder nahezu selbstfahrende Autos sowie Assistenzsysteme wie Spurhalteassistenten, Einparkhilfen oder Ähnliches,
+\item im Internet, wo jedem im Sekundentakt neue Inhalte basierend auf persönlichen Präferenzen vorgeschlagen werden,
+\item im medizinischen Bereich, wo Bilderkennung bei der Auswertung bildgebender Verfahren hilft,
+\item in der Industrie, wo Produktionsabläufe durch maschinelles Lernen optimiert wurden.
+\end{itemize}
+
+Im Folgenden soll es darum gehen, wie ein neuronales Netz funktioniert und wie man es mit maschinellem Lernen verwenden kann.
+
+\subsection{Aufbau neuronaler Netze \cite{NeuronaleNetzeImKlartext}}
+Künstliche neuronale Netze sind sehr stark an natürliche neuronale Netze angelehnt, weshalb es sinnvoll ist, zuerst diese zu betrachten.
+
+Sogenannte \enquote{Neuronen} (Nervenzellen) sind durch Synapsen miteinander verbunden, welche für den Elektronenfluss zwischen jeweils zwei Neuronen mithilfe eines \enquote{Synapsengewichts} verantwortlich sind. Mit diesem lässt sich die Anfälligkeit des nachgehenden Neurons auf das Signal des  vorhergehenden Neurons regulieren. \cite{Synapsengewicht}
+
+Es ergibt sich somit das folgende Bild:
+\begin{figure}[!h]
+\centering
+\begin{tikzpicture}[thick, main/.style={draw, circle, inner sep=0pt, minimum width=25pt}]
+\node (a1) at (1, 2) {\dots};
+\node (a2) at (0, 0) {\dots};
+\node (a3) at (1, -2) {\dots};
+
+\node (b1) at (5, 2) {\dots};
+\node[main, fill=blue!25] (b2) at (3, 0) {$n_{0, 0}$};
+\node (b3) at (5, -2) {\dots};
+
+\node (w1) at (5, 0) {$w_{0, 0, 0}$};
+
+\node[main, fill=blue!25] (c2) at (7, 0) {$n_{1, 0}$};
+\node (d2) at (9, 0) {\dots};
+
+\draw[dotted] (a1) -- (b2);
+\draw[dotted] (a2) -- (b2);
+\draw[dotted] (a3) -- (b2);
+
+\draw[dotted] (b1) -- (c2);
+\draw[-] (b2) -- (w1) -- (c2);
+\draw[dotted] (b3) -- (c2);
+
+\draw[dotted] (c2) -- (d2);
+\end{tikzpicture}
+\caption{Synapse zwischen zwei Neuronen}
+\label{fig:Neuronenverbindung}
+\end{figure}
+
+Es sei jedoch angemerkt, dass ein Neuron beliebig viele vorausgehende oder nachgehende Neuronen haben kann, die in Abbildung \ref{fig:Neuronenverbindung} der Übersicht halber nicht enthalten sind. Als grobe Größenordnung sei die Anzahl der Neuronen eines ausgewachsenen, menschlichen Gehirns genannt, welche sich je nach Literatur auf 80 bis 100 Milliarden beläuft. In der Abbildung sind vernachlässigte Ein- und Ausgänge von Neuronen mit gepunkteten Linien symbolisiert.
+
+Eine wichtige Grundlage, um aus dem natürlichen neuronalen Netz ein Künstliches abzuleiten, ist das Betrachten von Ausgaben von Neuronen und von Synapsengewichten als Zahlen. Das ermöglicht die Anwendung von Formeln zur mathematischen Beschreibung.
+
+\begin{figure}[!h]
+\centering
+\begin{tikzpicture}[thick, main/.style={draw, circle, inner sep=0pt, minimum width=25pt}]
+\node[main, fill=red!25] (i1) at (0, 0.75) {};
+\node[main, fill=red!25] (i2) at (0, 2.25) {};  
+\node[main, fill=red!25] (i3) at (0, 3.75) {};
+\node[main, fill=red!25] (i4) at (0, 5.25) {};
+
+\node[main, fill=blue!25] (h11) at (3, 0) {};  
+\node[main, fill=blue!25] (h12) at (3, 1.5) {};
+\node[main, fill=blue!25] (h13) at (3, 3) {};
+\node[main, fill=blue!25] (h14) at (3, 4.5) {};
+\node[main, fill=blue!25] (h15) at (3, 6) {};
+
+\node[main, fill=blue!25] (h21) at (6, 0) {};  
+\node[main, fill=blue!25] (h22) at (6, 1.5) {};
+\node[main, fill=blue!25] (h23) at (6, 3) {};
+\node[main, fill=blue!25] (h24) at (6, 4.5) {};
+\node[main, fill=blue!25] (h25) at (6, 6) {};
+
+\node[main, fill=green!35] (o1) at (9, 1.5) {};
+\node[main, fill=green!35] (o2) at (9, 3) {};
+\node[main, fill=green!35] (o3) at (9, 4.5) {};
+
+\draw[-] (i1) -- (h11);\draw[-] (i1) -- (h12);\draw[-] (i1) -- (h13);\draw[-] (i1) -- (h14);\draw[-] (i1) -- (h15);
+
+\draw[-] (i2) -- (h11);\draw[-] (i2) -- (h12);\draw[-] (i2) -- (h13);\draw[-] (i2) -- (h14);\draw[-] (i2) -- (h15);
+
+\draw[-] (i3) -- (h11);\draw[-] (i3) -- (h12);\draw[-] (i3) -- (h13);\draw[-] (i3) -- (h14);\draw[-] (i3) -- (h15);
+
+\draw[-] (i4) -- (h11);\draw[-] (i4) -- (h12);\draw[-] (i4) -- (h13);\draw[-] (i4) -- (h14);\draw[-] (i4) -- (h15);
+
+\draw[-] (h11) -- (h21);\draw[-] (h11) -- (h22);\draw[-] (h11) -- (h23);\draw[-] (h11) -- (h24);\draw[-] (h11) -- (h25);
+
+\draw[-] (h12) -- (h21);\draw[-] (h12) -- (h22);\draw[-] (h12) -- (h23);\draw[-] (h12) -- (h24);\draw[-] (h12) -- (h25);
+
+\draw[-] (h13) -- (h21);\draw[-] (h13) -- (h22);\draw[-] (h13) -- (h23);\draw[-] (h13) -- (h24);\draw[-] (h13) -- (h25);
+
+\draw[-] (h14) -- (h21);\draw[-] (h14) -- (h22);\draw[-] (h14) -- (h23);\draw[-] (h14) -- (h24);\draw[-] (h14) -- (h25);
+
+\draw[-] (h15) -- (h21);\draw[-] (h15) -- (h22);\draw[-] (h15) -- (h23);\draw[-] (h15) -- (h24);\draw[-] (h15) -- (h25);
+
+\draw[-] (o1) -- (h21);\draw[-] (o1) -- (h22);\draw[-] (o1) -- (h23);\draw[-] (o1) -- (h24);\draw[-] (o1) -- (h25);
+
+\draw[-] (o2) -- (h21);\draw[-] (o2) -- (h22);\draw[-] (o2) -- (h23);\draw[-] (o2) -- (h24);\draw[-] (o2) -- (h25);
+
+\draw[-] (o3) -- (h21);\draw[-] (o3) -- (h22);\draw[-] (o3) -- (h23);\draw[-] (o3) -- (h24);\draw[-] (o3) -- (h25);
+\end{tikzpicture}
+\caption{Aufbau eines einfachen neuronalen Netzes}
+\label{fig:Netzaufbau}
+\end{figure}
+
+Ebenso wichtig ist die Einteilung aller Neuronen des Netzes in unterschiedliche Schichten, die teilweise sogar unterschiedliche Aufgaben übernehmen müssen. Als Veranschaulichung dafür dient Abbildung \ref{fig:Netzaufbau}, die den Aufbau eines einfachen neuronalen Netzes darstellt. 
+
+Die erste Schicht ist die sogenannte \enquote{Eingabeschicht}, dessen Neuronen (rot) vergleichbar sind mit Sinneszellen. Hier werden Daten gesammelt, mit denen eine Ausgabe generiert werden soll. Es folgen beliebig viele \enquote{versteckte Schichten}. Diese erfüllen den Zweck, dass das Netz auch kompliziertere Dinge lernen kann, da die Gesamtheit der Gewichte ohne versteckte Schicht nur eine linear separierbare Funktion darstellen könnte. Abschließend folgt eine \enquote{Ausgabeschicht}, welche beispielsweise Entscheidungen des Netzes ausgibt, welche dann in einem anderen Teil des Programms verarbeitet werden. In diesem Fall sind alle Neuronen einer Schicht mit allen Neuronen der nächsten Schicht verbunden. Wie jedoch in Kapitel 2 noch thematisiert wird, existieren auch weitere Strukturen für den Aufbau eines neuronalen Netzes.
+
+Diese Grundlagen ermöglichen eine Berechnung von beispielsweise Ausgaben mithilfe der Formel
+\begin{equation}
+o_{i, j} = \varphi \left( \sum\limits_{k=0}^{|n_{i-1}|} o_{i-1, k} * w_{i - 1, k, j} \right)
+\end{equation}
+mit
+\begin{itemize}
+\item $n_{i, j}$: Neuron in der Schicht $i$ an der Stelle $j$
+\item $o_{i, j}$: Ausgabe des Neurons $n_{i, j}$
+\item $\varphi$: Differenzierbare Aktivierungsfunktion
+\item $|n_i|$: Anzahl der Neuronen in der Schicht $i$
+\item $w_{i, k, j}$: Synapsengewicht zwischen den Neuronen $n_{i, k}$ und $n_{i+1, j}$
+\end{itemize}
+
+\subsection{Drei Arten des maschinellen Lernens \cite{PythonMachineLearningChapter1}}
+Damit ein neuronales Netz lernt, müssen seine Gewichte angepasst werden. Dieser Vorgang wird auch Training genannt. Das kann auf drei unterschiedliche Arten erfolgen.
+
+\subsubsection{Überwachtes Lernen}
+Das überwachte Lernen ist die wohl am häufigsten verwendete Methode, ein neuronales Netz zu trainieren. Es zielt darauf ab, auch zu bislang unbekannten Eingaben eine passende Ausgabe zu generieren, meistens geht es darum, die Eingaben in Gruppen bestimmter Eigenschaften einzuteilen. 
+
+Während des Trainingsvorgangs wird mithilfe eines Trainingsdatensatzes (einige Eingaben mit zugehörigen erwarteten Ausgaben) angelernt, welche Muster in den Eingabedaten zu bestimmten Ausgaben gehören. Erhält das Netz nach abgeschlossenem Training eine Eingabe, ist es in der Lage, ein Muster darin zu erkennen und anhand dessen eine passende Ausgabe zu generieren.
+
+\begin{figure}[!h]
+\centering
+\begin{tikzpicture}
+\draw[->] (0, 0) -- (0, 5);
+\draw[->] (0, 0) -- (5, 0);
+
+\node at (2.5, -.25) {$x$};
+\node at (-.25, 2.5) {$y$};
+
+\foreach \i in {1, ..., 15} {
+	\node[red!50] at (3.75 + 1.25*rand, 3.75 + 1.25*rand) {•};
+	\node[blue!50] at (1.15 + rand, 2.5 + 2.25*rand) {•};
+	\node[green!50] at (3.75 + 1.25*rand, 1.25 + rand) {•};
+}
+
+\draw[dotted] (2.25, 0) -- (2.25, 5);
+\draw[dotted] (2.25, 2.45) -- (5, 2.45);
+\end{tikzpicture}
+\caption{Klassifizierung von Daten}
+\label{fig:SupervisedLearning}
+\end{figure}
+
+In Abbildung \ref{fig:SupervisedLearning} entsprechen alle Punkte einer bestimmten Eingabe, gleichfarbige Punkte haben dieselbe erwartete Ausgabe. Während des Trainings lernt das Netz beispielsweise, dass es Eingaben mit hohem $x$- und niedrigem $y$-Wert die Ausgabe grüner Punkte zuteilen soll.
+
+\subsubsection{Unüberwachtes Lernen}
+Das Ziel des unüberwachten Lernens ist es, innerhalb einer Menge von Eingaben Gruppen anhand ähnlicher Strukturen zu finden. Dafür wird keine Bearbeitung oder Sortierung der Daten benötigt.
+
+Daher ist diese Lernart besonders interessant für die Clusteranalyse, welche dasselbe Ziel anstrebt. Sie spielt besonders im Internet eine Rolle, wo Nutzer unterschiedlicher Zielgruppen unterschiedliche Inhalte, Produktvorschläge oder Werbungen angezeigt bekommen sollen.
+
+\begin{figure}[!h]
+\centering
+\begin{tikzpicture}
+\draw[->] (0, 0) -- (0, 5);
+\draw[->] (0, 0) -- (5, 0);
+
+\foreach \i in {1, ..., 15} {
+	\node[red!50] at (3.75 + .9*rand, 3.75 + .9*rand) {•};
+	\node[blue!50] at (1.5 + .9*rand, 1.5 + .9*rand) {•};
+	\node[green!50] at (4 + .6*rand, 1 + .6*rand) {•};
+}
+
+\draw[dotted] (3.75, 3.75) circle (1.3);
+\draw[dotted] (1.5, 1.5) circle (1.3);
+\draw[dotted] (4, 1) circle (1);
+\end{tikzpicture}
+\caption{Gruppierung von Daten}
+\label{fig:UnsupervisedLearning}
+\end{figure}
+
+In Abbildung \ref{fig:UnsupervisedLearning} entsprechen alle Punkte unterschiedlichen Daten, gleichfarbige Punkte haben jedoch ähnliche Eigenschaften. Das neuronale Netz soll diese Ähnlichkeiten erkennen und die Punkte gleicher Farbe jeweils in die gleiche Kategorie einteilen.
+
+\subsubsection{Bestärktes Lernen}
+Bestärktes Lernen dient dazu, den Entscheidungsprozess eines neuronales Netzes bezüglich einer bestimmten Tätigkeit zu trainieren.
+
+Dabei wird mit Belohnungen gearbeitet: Je besser eine Ausgabe war, umso höher ist die Belohnung für das Netz, was darin resultiert, dass die jeweilige Entscheidung verstärkt wird. Entschied sich das Netz falsch, ist die Belohnung gering und die Entscheidung wird geschwächt. Während des Lernvorgangs wird stets versucht, die Belohnung zu maximieren, um immer die bestmögliche Ausgabe zu erreichen.
+
+Die Belohnungen sind hierbei eine Art Feedback für das Netz, weshalb man auch von einer Art des überwachten Lernens sprechen kann.
+
+\subsection{Umgang mit neuronalen Netzen \cite{PythonMachineLearningChapter1}}
+Vor der Implementation maschinellen Lernens in einem Programm muss ein neuronales Netz entwickelt werden, das die gewünschte Aufgabe zuverlässig erledigen kann. Für die einzelnen Lernarten existieren standardisierte Abläufe, die von Netz zu Netz nahezu gleich sind. Im Folgenden wird der des überwachten Lernens vorgestellt.
+
+\subsubsection{Vorbereiten eines Trainingsdatensatzes}
+Zuerst müssen Daten gesammelt und zu einem Trainingsdatensatz zusammengefügt werden.
+Bei allen Daten handelt es sich um mögliche Eingaben für das Netz. Sollen also beispielsweise Bilder von unterschiedlichen Objekten unterschieden werden, sind die Daten ebenfalls Bilder, auf denen jeweils eines der zu klassifizierenden Objekte enthalten ist.
+
+Neben dem einfachen Zusammenstellen des Datensatzes kann es jedoch auch vorkommen, dass Daten zuerst bearbeitet werden müssen, sodass einzelne Details auffälliger sind. Das kann geschehen, indem beispielsweise ein Bild auf die relevanten Pixel reduziert wird. Dadurch lernt das Netz nicht nur besser, sondern auch schneller und mit einer geringeren Datenmenge als würden Daten nicht optimiert werden.
+
+Sämtliche Anpassungen der Daten müssen einheitlich und auch bei der Anwendung des Netzes mit unbekannten Daten erfolgen.
+
+Außerdem ist es für die bevorstehende Auswertung wichtig, dass ebenfalls ein Testdatensatz erstellt wird. Sein Aufbau ist gleich wie der des Trainingsdatensatzes, es sind lediglich andere Daten enthalten. 
+
+\subsubsection{Trainieren}
+Mit dem fertigen Trainingsdatensatz kann das neuronale Netz trainiert werden. Dafür existieren unterschiedliche Trainingsalgorithmen, die sich auch zwischen besonderen Aufbauten neuronaler Netze und deren spezifischen Aufgaben unterscheiden können. 
+
+Je nach Aufgabe oder spezifischen Struktur des Netzes können die Algorithmen unterschiedlich gut abschließen. Daher ist es lohnenswert, das Training nicht nur auf einen der Algorithmen zu beschränken, sondern mehrere mit Bezug auf die durchzuführende Aufgabe zu testen.
+
+\subsubsection{Auswertung und Anwendung}
+Nachdem das Training abgeschlossen wurde, ist es interessant zu wissen, mit welcher Genauigkeit oder Zuverlässigkeit eine Aufgabe ausgeführt wird. Dafür kommt der zuvor erstellte Testdatensatz in Einsatz, mit dem die Anzahl der falschen bzw. unerwünschten Ausgaben ermittelt wird und der somit eine Einschätzung des Netzes möglich macht.
+
+Wenn die Aufgabe zufriedenstellend abgeschlossen wird, können die Gewichte und die Konfiguration des Netzes in Dateien abgespeichert und in einem Anwendungsprogramm importiert. Das ermöglicht eine Rekonstruktion des neuronalen Netzes ohne großen Zeitaufwand und ohne erneut ein Training durchführen zu müssen.
+
+\section{Deep Convolutional Neural Networks \cite{PythonMachineLearningChapter15}}
+Deep Convolutional Neural Networks sind besondere Formen der neuronalen Netze, die besonders in der Bilderkennung und -Klassifikation sehr häufig verwendet werden. Grund dafür ist, dass sie viel schneller und besser trainiert werden können als herkömmliche neuronale Netze. Während diese eine Genauigkeit von über 80\% erst nach mehreren Trainingsepochen erreichen, lernen Deep Convolutional Neural Networks innerhalb weniger Epochen ein Bild mit einer Wahrscheinlichkeit von über 95\% korrekt zu klassifizieren.
+
+Das ist auf deren Aufbau und Lernweise zurückzuführen, welche der des Menschen noch mehr ähnelt als die herkömmlicher neuronaler Netze.
+
+\subsection{Convolutional Layer}
+Verwendet man ein übliches neuronales Netz für die Bildklassifikation, ist die Relevanz zweier nebeneinanderliegender Pixel genauso hoch wie die von weit entfernten Pixeln. Das folgt daraus, dass die Ausgabe jedes Neurons an jedes Neuron der Folgeschicht propagiert wird.
+
+In einem Convolutional Layer ist das anders: Mithilfe eines \enquote{Kernels} werden aus nebeneinanderliegenden Pixeln Eigenschaften erkannt. Erkennbare Eigenschaften beschränken sich in den höheren Schichten auf einfache Formen wie zum Beispiel Kanten, je tiefer sich eine Schicht jedoch im Netz befindet, kann diese immer komplexere Objekte anhand von Konturen unterscheiden.
+
+Um das zu erreichen, wird die Convolution, oder eine Vereinfachung, die häufiger in Machine-Learning-Frameworks implementiert ist, die Cross Correlation, angewandt.
+
+\subsubsection{Eindimensionale Cross Correlation}
+Als \enquote{Cross Correlation} wird im Folgenden eine Operation mit einem Eingabevektor $x$ und einem Kernel $w$ betrachtet, aus dem ein Ausgabevektor $y$ berechnet werden soll. Die Cross Correlation ist eine Vereinfachung der Convolution, wobei der Unterschied im Wesentlichen darin besteht, dass der Kernel bei der Convolution zuerst gespiegelt werden muss.
+
+Mit der Bedingung
+\[
+|x| \geq |w| \qquad |x|, \: |w| > 0
+\]
+kann die valide Cross Correlation im eindimensionalen Raum (folgend $\odot$) mathematisch durch die Formel
+\begin{equation}
+y = x \odot w \quad \rightarrow \quad y_i = \sum\limits_{k=0}^{|w| - 1} x_{i+k} * w_{k}
+\end{equation}
+beschrieben werden. Im Folgenden eintspricht das Symbol $\odot$ der Convolution-Operation. In Worten bedeutet das, dass der Kernel $w$ an den Eingaben $x$ angelegt wird. Addiert man das Produkt der einzelnen Werte $x_i$ und $w_i$, ermittelt man $y_i$. Um $y_{i+1}$ zu berechnen, muss der Kernel um eine Einheit verschoben werden. Ein Sinnbild ist in Abbildung \ref{fig:CrossCorrelationNoPadding} dargestellt.
+
+\begin{figure}[!h]
+\centering
+\begin{tikzpicture}[thick, main/.style={draw, rectangle, inner sep=0pt, minimum width=1cm, minimum height=1cm}]
+\node at (-1.5, .25) {$x$};
+\node[text=blue!50] at (-1, -.25) {$w$};
+\node at (-.5, -2.5) {$y$};
+
+\node[main] at (0, 0) {};
+\node[main] at (1, 0) {};
+\node[main] at (2, 0) {};
+\node[main] at (3, 0) {};
+\node[main] at (4, 0) {};
+
+\node[main, draw=blue!35, line width=.75mm] at (.25, -.25) {};
+\node[main, draw=blue!35, line width=.75mm] at (1.25, -.25) {};
+\node[main, draw=blue!35, line width=.75mm] at (2.25, -.25) {};
+
+\node[main, fill=blue!25] at (1, -2.5) {};
+\node[main] at (2, -2.5) {};
+\node[main] at (3, -2.5) {};
+
+\draw[dashed, draw=blue!25, line width=.5mm] (-.25, -.75) -- (.5, -3);
+\draw[dashed, draw=blue!25, line width=.5mm] (-.25, .25) -- (.5, -2);
+\draw[dashed, draw=blue!25, line width=.5mm] (2.75, -.75) -- (1.5, -3);
+\draw[dashed, draw=blue!25, line width=.5mm] (2.75, .25) -- (1.5, -2);
+\end{tikzpicture}
+$\qquad$
+\begin{tikzpicture}[thick, main/.style={draw, rectangle, inner sep=0pt, minimum width=1cm, minimum height=1cm}]
+\node[main] at (0, 0) {};
+\node[main] at (1, 0) {};
+\node[main] at (2, 0) {};
+\node[main] at (3, 0) {};
+\node[main] at (4, 0) {};
+
+\node[main, draw=blue!35, line width=.75mm] at (1.25, -.25) {};
+\node[main, draw=blue!35, line width=.75mm] at (2.25, -.25) {};
+\node[main, draw=blue!35, line width=.75mm] at (3.25, -.25) {};
+
+\node[main] at (1, -2.5) {};
+\node[main, fill=blue!25] at (2, -2.5) {};
+\node[main] at (3, -2.5) {};
+
+\draw[dashed, draw=blue!25, line width=.5mm] (.75, -.75) -- (1.5, -3);
+\draw[dashed, draw=blue!25, line width=.5mm] (.75, .25) -- (1.5, -2);
+\draw[dashed, draw=blue!25, line width=.5mm] (3.75, -.75) -- (2.5, -3);
+\draw[dashed, draw=blue!25, line width=.5mm] (3.75, .25) -- (2.5, -2);
+\end{tikzpicture}
+\caption{Cross Correlation im eindimensionalen Raum, ohne Padding}
+\label{fig:CrossCorrelationNoPadding}
+\end{figure}
+
+Es ist offensichtlich, dass die Länge des Ausgabevektors $y$ unter diesen Bedingungen stets kleiner als die Länge der Eingabe sein wird. Ein solcher Informationsverlust von Pixeln kann jedoch zu Ungenauigkeiten führen. Daher wird ein \enquote{Padding} eingeführt, welches den Eingabevektor $x$ künstlich mit Nullen erweitern soll. Zur Ermittlung des Ausgabevektors $y$ entsteht das in Abbildung \ref{fig:CrossCorrelationWithPadding} dargestellte Schema. Man spricht nun nicht mehr von der validen Cross Correlation, sondern von einer Cross Correlation mit \enquote{Same Padding}, bei dem der Ausgabevektor $y$ dieselbe Länge hat wie der Eingabevektor $x$. Darüber hinaus existiert noch das \enquote{Full Padding}, bei dem der Eingabevektor $x$ mit noch mehr Nullen erweitert wird. Dadurch wird die Ausgabe nach einem Convolutional Layer größer als die Eingabe, wodurch allerdings eine Vergrößerung von Daten stattfindet. Der damit verbundene Rechenaufwand ist der Grund, weshalb das Full Padding selten Anwendung findet.
+
+\begin{figure}[!h]
+\centering
+\begin{tikzpicture}[thick, main/.style={draw, rectangle, inner sep=0pt, minimum width=1cm, minimum height=1cm}]
+\node at (-2.5, .25) {$x^p$};
+\node[text=blue!50] at (-2, -.25) {$w$};
+\node at (-1.5, -2.5) {$y$};
+
+\node[main, dotted] at (-1, 0) {$0$};
+\node[main] at (0, 0) {};
+\node[main] at (1, 0) {};
+\node[main] at (2, 0) {};
+\node[main] at (3, 0) {};
+\node[main] at (4, 0) {};
+\node[main, dotted] at (5, 0) {$0$};
+
+\node[main, draw=blue!35, line width=.75mm] at (-.75, -.25) {};
+\node[main, draw=blue!35, line width=.75mm] at (.25, -.25) {};
+\node[main, draw=blue!35, line width=.75mm] at (1.25, -.25) {};
+
+\node[main, fill=blue!25] at (0, -2.5) {};
+\node[main] at (1, -2.5) {};
+\node[main] at (2, -2.5) {};
+\node[main] at (3, -2.5) {};
+\node[main] at (4, -2.5) {};
+
+\draw[dashed, draw=blue!25, line width=.5mm] (-1.25, -.75) -- (-.5, -3);
+\draw[dashed, draw=blue!25, line width=.5mm] (-1.25, .25) -- (-.5, -2);
+\draw[dashed, draw=blue!25, line width=.5mm] (1.75, -.75) -- (.5, -3);
+\draw[dashed, draw=blue!25, line width=.5mm] (1.75, .25) -- (.5, -2);
+\end{tikzpicture}
+\caption{Cross Correlation im eindimensionalen Raum, mit Padding}
+\label{fig:CrossCorrelationWithPadding}
+\end{figure}
+
+\subsubsection{Zweidimensionale Cross Correlation}
+Bilder sind allerdings nicht eindimensional, weshalb die zweidimensionale Cross Correlation benötigt wird. 
+
+Unter Definition der Variablen
+\begin{itemize}
+\item $X^p$: Eingabematrix ($\hat{=}$ Bild, einfarbig, mit Nullen erweitert)
+\item $W$: Kernel-Matrix
+\item $Y$: Ausgabematrix (Bild mit angewandtem Filter)
+\end{itemize}
+kann diese durch die Formel
+\begin{equation}
+Y = X \odot W \quad \rightarrow \quad Y_{i, j} = \sum\limits_{k=0}^{|W|} \; \sum\limits_{l=0}^{|W_l|} X^p_{i+k, j+l} * W_{k, j}
+\end{equation}
+beschrieben werden, anhand eines Schemas und Abbildung \ref{fig:CrossCorrelation2D} ist sie jedoch einfacher zu verstehen.
+
+\begin{figure}[!h]
+\centering
+\scalebox{.95}{
+\begin{tikzpicture}
+\node at (2.5, 1.5) {$X^p$};
+\node[text=blue!50] at (.75, 2) {$W$};
+\node at (9.5, 1) {$Y$};
+\draw[-] (0, 0) -- (5, -1) -- (5, -6) -- (0, -5) -- (0, 0);
+\draw[-] (0, -1) -- (5, -2);
+\draw[-] (0, -2) -- (5, -3);
+\draw[-] (0, -3) -- (5, -4);
+\draw[-] (0, -4) -- (5, -5);
+\draw[-] (1, -.2) -- (1, -5.2);
+\draw[-] (2, -.4) -- (2, -5.4);
+\draw[-] (3, -.6) -- (3, -5.6);
+\draw[-] (4, -.8) -- (4, -5.8);
+\draw[dotted] (-1, 1.2) -- (6, -.2) -- (6, -7.2) -- (-1, -5.8) -- (-1, 1.2);
+\draw[dotted] (0, 1) -- (0, -6);
+\draw[dotted] (1, .8) -- (1, -6.2);
+\draw[dotted] (2, .6) -- (2, -6.4);
+\draw[dotted] (3, .4) -- (3, -6.6);
+\draw[dotted] (4, .2) -- (4, -6.8);
+\draw[dotted] (5, 0) -- (5, -7);
+\draw[dotted] (-1, .2) -- (6, -1.2);
+\draw[dotted] (-1, -.8) -- (6, -2.2);
+\draw[dotted] (-1, -1.8) -- (6, -3.2);
+\draw[dotted] (-1, -2.8) -- (6, -4.2);
+\draw[dotted] (-1, -3.8) -- (6, -5.2);
+\draw[dotted] (-1, -4.8) -- (6, -6.2);
+\node at (-.5, .6) {$0$};
+\node at (.5, .4) {$0$};
+\node at (1.5, .2) {$0$};
+\node at (2.5, 0) {$0$};
+\node at (3.5, -.2) {$0$};
+\node at (4.5, -.4) {$0$};
+\node at (5.5, -.6) {$0$};
+\node at (5.5, -1.6) {$0$};
+\node at (5.5, -2.6) {$0$};
+\node at (5.5, -3.6) {$0$};
+\node at (5.5, -4.6) {$0$};
+\node at (5.5, -5.6) {$0$};
+\node at (5.5, -6.6) {$0$};
+\node at (4.5, -6.4) {$0$};
+\node at (3.5, -6.2) {$0$};
+\node at (2.5, -6) {$0$};
+\node at (1.5, -5.8) {$0$};
+\node at (.5, -5.6) {$0$};
+\node at (-.5, -5.4) {$0$};
+\node at (-.5, -4.4) {$0$};
+\node at (-.5, -3.4) {$0$};
+\node at (-.5, -2.4) {$0$};
+\node at (-.5, -1.4) {$0$};
+\node at (-.5, -.4) {$0$};
+\draw[-, draw=blue!35, line width=.75mm] (-.75, .95) -- (2.25, .35) -- (2.25, -2.65) -- (-.75, -2.05) -- (-.75, .95);
+\draw[-, draw=blue!35, line width=.75mm] (.25, .75) -- (.25, -2.25);
+\draw[-, draw=blue!35, line width=.75mm] (1.25, .55) -- (1.25, -2.45);
+\draw[-, draw=blue!35, line width=.75mm] (-.75, -.05) -- (2.25, -.65);
+\draw[-, draw=blue!35, line width=.75mm] (-.75, -1.05) -- (2.25, -1.65);
+\fill[fill=blue!25] (7, 0) -- (8, -.2) -- (8, -1.2) -- (7, -1);
+\draw[-] (7, 0) -- (12, -1) -- (12, -6) -- (7, -5) -- (7, 0);
+\draw[-] (7, -1) -- (12, -2);
+\draw[-] (7, -2) -- (12, -3);
+\draw[-] (7, -3) -- (12, -4);
+\draw[-] (7, -4) -- (12, -5);
+\draw[-] (8, -.2) -- (8, -5.2);
+\draw[-] (9, -.4) -- (9, -5.4);
+\draw[-] (10, -.6) -- (10, -5.6);
+\draw[-] (11, -.8) -- (11, -5.8);
+\draw[dashed, draw=blue!25, line width=.5mm] (-.75, .95) -- (7, 0);
+\draw[dashed, draw=blue!25, line width=.5mm] (2.25, .35) -- (8, -.2);
+\draw[dashed, draw=blue!25, line width=.5mm] (2.25, -2.65) -- (8, -1.2);
+\draw[dashed, draw=blue!25, line width=.5mm] (-.75, -2.05) -- (7, -1);
+\end{tikzpicture}
+}
+\caption{Cross Correlation im zweidimensionalen Raum}
+\label{fig:CrossCorrelation2D}
+\end{figure}
+
+Auch hier wird die Kernel-Matrix $W$ an die Eingabematrix $X^p$ angelegt und verschoben, um die Werte der Ausgabe $Y$ durch Addieren der Produkte zu berechnen. Es ist jedoch zu beachten, dass $W$ in diesem Fall in beide Richtungen verschoben wird, sodass eine zweidimensionale Ausgabe entsteht.
+
+\subsubsection{Praktische Anwendung}
+In der Praxis muss ein Convolutional Layer mehrere zweidimensionale Eingabematrizen annehmen können, da beispielsweise Bilder nicht (alle) einfarbig sind. Daher werden mehrere Eingabechannel definiert, für jede Eingabematrix einer. Um beispielsweise ein Farbbild einzugeben, würden 3 Channel benötigt, da ein solches Bild in die Farben rot, grün und blau unterteilt ist.
+
+Auch die Anzahl der Ausgabematrizen soll für jede Schicht variabel, aber konstant sein. Jede Eingabematrix hat dabei einen Einfluss auf jede Ausgabematrix.
+
+Um diesen Einfluss zu steuern wird eine Anpassung der Dimension des Kernels benötigt. Diese sind nun die Anzahl der Ausgabematrizen, die Anzahl der Eingabematrizen, die Größe und die Breite der Gewichte, weshalb der Kernel nun als vierdimensionales Array implementiert wird.
+
+Eine Berechnung der Ausgabematrix $Y_i$ des Ausgabechannels $i$ lässt sich nun formal durch
+\begin{equation}
+Y_i = \sum\limits_{j=0}^{|X|} X_j \odot W_{i, j}
+\end{equation}
+ausdrücken.
+
+Im Anschluss an die Berechnung einer Ausgabematrix $Y_i$ muss darauf noch die bereits aus Kapitel 1 bekannte differenzierbare Aktivierungsfunktion angewandt werden. Es entsteht mit 
+\[
+A_i = \varphi (Y_i)
+\]
+eine sogenannte \enquote{Feature Map}. Diese enthalten in tieferen Schichten immer abstrakter werdende Eigenschaften der zu klassifizierenden Objekte, welche eine viel genauere Erkennung eines Objekts ermöglicht.
+
+\subsection{Subsampling Layer}
+Subsampling Layers kommen in neuronalen Netzen vor, um die Menge an Eigenschaften einer Eingabe mittels Pooling-Operationen zu verringern. Das resultiert in einem deutlich schnelleren Trainingsvorgang, da nach einem Subsampling Layer deutlich weniger Gewichte angepasst werden müssen.
+
+Eine Eingabe $X$ wird in mehrere kleine Pooling-Matrizen $P$ aufgeteilt. Ab diesem Punkt können zwei unterschiedliche Arten angewandt werden: Bei \enquote{Max-Pooling} wird jeweils der größte Wert der Pooling-Matrix in die Ausgabe weitergeleitet, bei \enquote{Mean-Pooling} wird der Durchschnitt aller darin enthaltenen Werte ermittelt.
+
+\begin{figure}[!h]
+\centering
+\begin{tikzpicture}[thick, main/.style={draw, rectangle, inner sep=0pt, minimum width=.5cm, minimum height=.5cm}]
+\node[main, fill=blue!25] at (0, 0) {3};
+\node[main, fill=blue!25] at (.5, 0) {1};
+\node[main, fill=orange!35] at (1, 0) {5};
+\node[main, fill=orange!35] at (1.5, 0) {1};
+
+\node[main, fill=blue!25] at (0, .5) {2};
+\node[main, fill=blue!25] at (.5, .5) {6};
+\node[main, fill=orange!35] at (1, .5) {2};
+\node[main, fill=orange!35] at (1.5, .5) {4};
+
+\node[main, fill=red!25] at (0, 1) {9};
+\node[main, fill=red!25] at (.5, 1) {3};
+\node[main, fill=green!35] at (1, 1) {8};
+\node[main, fill=green!35] at (1.5, 1) {1};
+
+\node[main, fill=red!25] at (0, 1.5) {7};
+\node[main, fill=red!25] at (.5, 1.5) {1};
+\node[main, fill=green!35] at (1, 1.5) {2};
+\node[main, fill=green!35] at (1.5, 1.5) {5};
+
+\draw[->] (2.5, .75) -- (3.5, .75);
+
+\node at (4.75, 2.5) {Max-Pooling};
+\node[main, fill=red!25] at (4.5, 1.75) {9};
+\node[main, fill=green!25] at (5, 1.75) {8};
+\node[main, fill=blue!25] at (4.5, 1.25) {6};
+\node[main, fill=orange!25] at (5, 1.25) {5};
+
+\node at (4.75, -1) {Mean-Pooling};
+\node[main, fill=red!25] at (4.5, .25) {5};
+\node[main, fill=green!25] at (5, .25) {4};
+\node[main, fill=blue!25] at (4.5, -.25) {3};
+\node[main, fill=orange!25] at (5, -.25) {3};
+\end{tikzpicture}
+\caption{Min- und Mean-Pooling}
+\end{figure}
+
+Subsampling Layer selbst haben keine Gewichte sondern beruhen auf simplen mathematischen Berechnungen wie dem Durchschnitt oder einem Größenvergleich.
+
+\subsection{Aufbau Convolutional Neural Networks}
+Mit den nun bekannten neuen Schichten lässt sich ein Convolutional Neural Network zusammenstellen. Ihr Aufbau wird im Folgenden exemplarisch am Beispiel der Bilderkennung erklärt.
+
+Zuerst wird noch außerhalb des Netzes ein farbiges Bild in seine drei Farbkomponenten rot, grün und blau aufgeteilt, sodass für jede eine einzelne Matrix entsteht mit Werten, die beschreiben, wie hoch der Anteil der entsprechenden Farbe an diesem Pixel ist.
+
+Die dabei entstehenden Matrizen entsprechen der Eingabe des ersten Convolutional Layer. Diese Schicht führt Convolutions mit einem Kernel der Größe $3 \times 3$ oder $5 \times 5$ durch, wobei die Anzahl der Ausgabechannel meist zwischen 8 32 liegt. Die optimale Wahl dieser Anzahl ist abhängig von der auszuführenden Aufgabe und lässt sich am Besten in Tests herausfinden.
+
+Anschließend erfolgt ein Subsampling der Ausgabematrizen mit Pooling-Matrizen der Größe $2 \times 2$, handelt es sich jedoch um größere Bilder mit größeren Details kann auch in Matrizen der Größe $4 \times 4$ aufgeteilt werden. In der Regel wird Max-Pooling verwendet, das Testen von Mean-Pooling kann sich allerdings auch lohnen.
+
+Es folgt ein erneuter Convolutional Layer mit derselben Größe des Kernels und etwa doppelt so vielen Ausgabematrizen wie zuvor. Auch das anschließende Subsampling erfolgt mit Pooling-Matrizen derselben Größe wie in der vorherigen Subsampling-Schicht.
+
+Nach Bedarf kann auch eine erneute Convolution mit Subsampling eingebaut werden, ist jedoch meistens nicht nötig.
+
+Nach der letzten Subsampling-Schicht müssen alle Ausgabematrizen abgeflacht werden (engl. \enquote{Flattening}).
+
+\section{Resultate}
+
+\bibliographystyle{gerplain}
+\bibliography{refs}
+\end{document}
