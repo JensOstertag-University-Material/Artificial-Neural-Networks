@@ -261,7 +261,7 @@ kann die valide Cross Correlation im eindimensionalen Raum (folgend $\odot$) mat
 \begin{equation}
 y = x \odot w \quad \rightarrow \quad y_i = \sum\limits_{k=0}^{|w| - 1} x_{i+k} * w_{k}
 \end{equation}
-beschrieben werden. In Worten bedeutet das, dass der Kernel $w$ an den Eingaben $x$ angelegt wird. Addiert man das Produkt der einzelnen Werte $x_i$ und $w_i$, ermittelt man $y_i$. Um $y_{i+1}$ zu berechnen, muss der Kernel um eine Einheit verschoben werden. Ein Sinnbild ist in Abbildung \ref{fig:CrossCorrelationNoPadding} dargestellt.
+beschrieben werden. Im Folgenden eintspricht das Symbol $\odot$ der Convolution-Operation. In Worten bedeutet das, dass der Kernel $w$ an den Eingaben $x$ angelegt wird. Addiert man das Produkt der einzelnen Werte $x_i$ und $w_i$, ermittelt man $y_i$. Um $y_{i+1}$ zu berechnen, muss der Kernel um eine Einheit verschoben werden. Ein Sinnbild ist in Abbildung \ref{fig:CrossCorrelationNoPadding} dargestellt.
 
 \begin{figure}[!h]
 \centering
@@ -446,18 +446,26 @@ beschrieben werden, anhand eines Schemas und Abbildung \ref{fig:CrossCorrelation
 Auch hier wird die Kernel-Matrix $W$ an die Eingabematrix $X^p$ angelegt und verschoben, um die Werte der Ausgabe $Y$ durch Addieren der Produkte zu berechnen. Es ist jedoch zu beachten, dass $W$ in diesem Fall in beide Richtungen verschoben wird, sodass eine zweidimensionale Ausgabe entsteht.
 
 \subsubsection{Praktische Anwendung}
-In der Praxis muss ein Convolutional Layer mehrere zweidimensionale Matrizen annehmen können. Zum Einen können dadurch farbige Bilder verarbeitet werden, welche drei Farbkanäle (rot, grün und blau) haben. Diese werden zusammengefasst und als dreidimensionales Array in die Schicht gegeben. Dort wird für jeden Channel mit einem eigenen Kernel (in der Regel eine $3 \times 3$ oder $5 \times 5$-Matrix) eine Ausgabe berechnet, wobei jedoch zu beachten ist, dass nun auch ein Bias benötigt wird. Somit wird also auch die Ausgabe intern als dreidimensionales Array verarbeitet. 
+In der Praxis muss ein Convolutional Layer mehrere zweidimensionale Eingabematrizen annehmen können, da beispielsweise Bilder nicht (alle) einfarbig sind. Daher werden mehrere Eingabechannel definiert, für jede Eingabematrix einer. Um beispielsweise ein Farbbild einzugeben, würden 3 Channel benötigt, da ein solches Bild in die Farben rot, grün und blau unterteilt ist.
 
-Zu jedem Channel existiert mindestens eine Ausgabe $Y$, meistens sollen jedoch mehr berechnet werden. Das erfolgt, indem zum Beispiel zu einem RGB-Bild nicht nur drei, sondern Vielfache von 3, zweidimensionale Kernel-Matrizen existieren, die zu jeder Eingabematrix das Vielfache an Ausgaben zu berechnen. Um das jedoch besser zu strukturieren, wird der Kernel als vierdimensionale Matrix betrachtet mit der Höhe und  Breite, Anzahl an Eingaben und Anzahl an Ausgaben.
+Auch die Anzahl der Ausgabematrizen soll für jede Schicht variabel, aber konstant sein. Jede Eingabematrix hat dabei einen Einfluss auf jede Ausgabematrix.
 
-Mit einer Ausgabe $Y$ allein ist jedoch noch nicht viel Anzufangen, da erst die bereits aus dem ersten Kapitel bekannte differenzierbare Aktivierungsfunktion angewandt werden muss. Es entsteht mit 
+Um diesen Einfluss zu steuern wird eine Anpassung der Dimension des Kernels benötigt. Diese sind nun die Anzahl der Ausgabematrizen, die Anzahl der Eingabematrizen, die Größe und die Breite der Gewichte, weshalb der Kernel nun als vierdimensionales Array implementiert wird.
+
+Eine Berechnung der Ausgabematrix $Y_i$ des Ausgabechannels $i$ lässt sich nun formal durch
+\begin{equation}
+Y_i = \sum\limits_{j=0}^{|X|} X_j \odot W_{i, j}
+\end{equation}
+ausdrücken.
+
+Im Anschluss an die Berechnung einer Ausgabematrix $Y_i$ muss darauf noch die bereits aus Kapitel 1 bekannte differenzierbare Aktivierungsfunktion angewandt werden. Es entsteht mit 
 \[
-A = \varphi (Y)
+A_i = \varphi (Y_i)
 \]
-eine sogenannte \enquote{Feature Map}. Diese enthalten in tieferen Schichten immer abstrakter werdende Eigenschaften der zu klassifizierenden Objekte.
+eine sogenannte \enquote{Feature Map}. Diese enthalten in tieferen Schichten immer abstrakter werdende Eigenschaften der zu klassifizierenden Objekte, welche eine viel genauere Erkennung eines Objekts ermöglicht.
 
 \subsection{Subsampling Layer}
-Subsampling Layers kommen in neuronalen Netzen vor, um die Menge an Eigenschaften einer Eingabe mittels Pooling-Operationen zu verringern. Das resultiert in einem deutlich schnelleren Trainingsvorgang, da nach einem Subsampling Layer weniger Gewichte angepasst werden müssen.
+Subsampling Layers kommen in neuronalen Netzen vor, um die Menge an Eigenschaften einer Eingabe mittels Pooling-Operationen zu verringern. Das resultiert in einem deutlich schnelleren Trainingsvorgang, da nach einem Subsampling Layer deutlich weniger Gewichte angepasst werden müssen.
 
 Eine Eingabe $X$ wird in mehrere kleine Pooling-Matrizen $P$ aufgeteilt. Ab diesem Punkt können zwei unterschiedliche Arten angewandt werden: Bei \enquote{Max-Pooling} wird jeweils der größte Wert der Pooling-Matrix in die Ausgabe weitergeleitet, bei \enquote{Mean-Pooling} wird der Durchschnitt aller darin enthaltenen Werte ermittelt.
 
@@ -493,7 +501,7 @@ Eine Eingabe $X$ wird in mehrere kleine Pooling-Matrizen $P$ aufgeteilt. Ab dies
 \node[main, fill=orange!25] at (5, 1.25) {5};
 
 \node at (4.75, -1) {Mean-Pooling};
-\node[main, fill=red!25] at (4.5, .25) {11};
+\node[main, fill=red!25] at (4.5, .25) {5};
 \node[main, fill=green!25] at (5, .25) {4};
 \node[main, fill=blue!25] at (4.5, -.25) {3};
 \node[main, fill=orange!25] at (5, -.25) {3};
