@@ -523,7 +523,9 @@ Es folgt ein erneuter Convolutional Layer mit derselben Größe des Kernels und 
 
 Nach Bedarf kann auch eine erneute Convolution mit Subsampling eingebaut werden, ist jedoch meistens nicht nötig.
 
-Nach der letzten Subsampling-Schicht müssen alle Ausgabematrizen abgeflacht werden (engl. \enquote{Flattening}).
+Nach der letzten Subsampling-Schicht müssen alle Ausgabematrizen abgeflacht werden (engl. \enquote{Flattening}), indem alle Zeilen jeder Matrix aneinandergereiht werden, wodurch ein eindimensionaler Vektor entsteht.
+
+Dieser Vektor entspricht der Eingabe eines herkömmlichen neuronalen Netzes, bei dem jedes Neuron mit jedem Neuron der nächsten Schicht verbunden ist. In der Regel benötigt dieses Netz sogar nur eine versteckte Schicht, da sämtliche Eingaben bereits auf die relevantesten Informationen heruntergebrochen wurden und nur noch elementare boolesche Funktionen ausgeführt werden müssen.
 
 \begin{figure}[!h]
 \centering
@@ -626,7 +628,7 @@ Nach der letzten Subsampling-Schicht müssen alle Ausgabematrizen abgeflacht wer
 \path[->, thick] (8, -.2) edge[bend right] node[below, align=center] {\textbf{Subsampling}\\Pooling-Größe\\$2 \times 2$} (9.8, .1);
 \path[->, thick] (9.1, 1.9) edge[bend left] node[above, align=center] {\textbf{Flattening}} (10.8, 2.2);
 \end{tikzpicture}
-\caption{Aufbau eines Convolutional Neural Networks}
+\caption{Exemplarischer Aufbau eines Convolutional Neural Networks}
 \label{fig:CNNArchitecture}
 \end{figure}
 
