@@ -135,9 +135,9 @@ Ebenso wichtig ist die Einteilung aller Neuronen des Netzes in unterschiedliche 
 
 Die erste Schicht ist die sogenannte \enquote{Eingabeschicht}, dessen Neuronen (rot) vergleichbar sind mit Sinneszellen. Hier werden Daten gesammelt, mit denen eine Ausgabe generiert werden soll. Es folgen beliebig viele \enquote{versteckte Schichten}. Diese erfüllen den Zweck, dass das Netz auch kompliziertere Dinge lernen kann, da die Gesamtheit der Gewichte ohne versteckte Schicht nur eine linear separierbare Funktion darstellen könnte. Abschließend folgt eine \enquote{Ausgabeschicht}, welche beispielsweise Entscheidungen des Netzes ausgibt, welche dann in einem anderen Teil des Programms verarbeitet werden. In diesem Fall sind alle Neuronen einer Schicht mit allen Neuronen der nächsten Schicht verbunden. Wie jedoch in Kapitel 2 noch thematisiert wird, existieren auch weitere Strukturen für den Aufbau eines neuronalen Netzes.
 
-Diese Grundlagen ermöglichen eine Berechnung von beispielsweise Ausgaben mithilfe der Formel
+Diese Grundlagen ermöglichen beispielsweise eine Berechnung der Ausgabe eines Neurons mit der Formel
 \begin{equation}
-o_{i, j} = \varphi \left( \sum\limits_{k=0}^{|n_{i-1}|} o_{i-1, k} * w_{i - 1, k, j} \right)
+o_{i, j} = \varphi \left( \sum\limits_{k=0}^{|n_{i-1}| - 1} o_{i-1, k} * w_{i - 1, k, j} \right)
 \end{equation}
 mit
 \begin{itemize}
@@ -147,6 +147,8 @@ mit
 \item $|n_i|$: Anzahl der Neuronen in der Schicht $i$
 \item $w_{i, k, j}$: Synapsengewicht zwischen den Neuronen $n_{i, k}$ und $n_{i+1, j}$
 \end{itemize}
+
+Wörtlich bedeutet das, dass zuerst die Netzeingabe eines Neurons durch Addieren aller Produkte einer Ausgabe eines vorherigen Neurones mit dem jeweiligen Gewicht zwischen den beiden Neuronen berechnet wird. Die Ausgabe des Neurons lässt sich nun mit der Aktivierungsfunktion in Abhängigkeit dieser Summe berechnen. Eine Aktivierungsfunktion wird benötigt, damit ein neuronales Netz auch nicht-lineare Eigenschaften erlernen kann.
 
 \subsection{Drei Arten des maschinellen Lernens \cite{PythonMachineLearningChapter1}}
 Damit ein neuronales Netz lernt, müssen seine Gewichte angepasst werden. Dieser Vorgang wird auch Training genannt. Das kann auf drei unterschiedliche Arten erfolgen.
@@ -449,13 +451,13 @@ In der Praxis muss ein Convolutional Layer mehrere zweidimensionale Eingabematri
 
 Auch die Anzahl der Ausgabematrizen soll für jede Schicht variabel, aber konstant sein. Jede Eingabematrix hat dabei einen Einfluss auf jede Ausgabematrix.
 
-Um diesen Einfluss zu steuern wird eine Anpassung der Dimension des Kernels benötigt. Diese sind nun die Anzahl der Ausgabematrizen, die Anzahl der Eingabematrizen, die Größe und die Breite der Gewichte, weshalb der Kernel nun als vierdimensionales Array implementiert wird.
+Um diesen Einfluss zu steuern wird eine Anpassung der Dimensionen des Kernels benötigt. Diese sind nun die Anzahl der Ausgabematrizen, die Anzahl der Eingabematrizen, die Größe und die Breite der Gewichte, weshalb der Kernel nun als vierdimensionales Array implementiert wird.
 
 Eine Berechnung der Ausgabematrix $Y_i$ des Ausgabechannels $i$ lässt sich nun formal durch
 \begin{equation}
-Y_i = \sum\limits_{j=0}^{|X|} X_j \odot W_{i, j}
+Y_i = \sum\limits_{j=0}^{|X| - 1} X_j \odot W_{i, j}
 \end{equation}
-ausdrücken.
+ausdrücken. 
 
 Im Anschluss an die Berechnung einer Ausgabematrix $Y_i$ muss darauf noch die bereits aus Kapitel 1 bekannte differenzierbare Aktivierungsfunktion angewandt werden. Es entsteht mit 
 \[
@@ -511,22 +513,6 @@ Eine Eingabe $X$ wird in mehrere kleine Pooling-Matrizen $P$ aufgeteilt. Ab dies
 Subsampling Layer selbst haben keine Gewichte sondern beruhen auf simplen mathematischen Berechnungen wie dem Durchschnitt oder einem Größenvergleich.
 
 \subsection{Aufbau Convolutional Neural Networks}
-Mit den nun bekannten neuen Schichten lässt sich ein Convolutional Neural Network zusammenstellen. Ihr Aufbau wird im Folgenden exemplarisch am Beispiel der Bilderkennung erklärt.
-
-Zuerst wird noch außerhalb des Netzes ein farbiges Bild in seine drei Farbkomponenten rot, grün und blau aufgeteilt, sodass für jede eine einzelne Matrix entsteht mit Werten, die beschreiben, wie hoch der Anteil der entsprechenden Farbe an diesem Pixel ist.
-
-Die dabei entstehenden Matrizen entsprechen der Eingabe des ersten Convolutional Layer. Diese Schicht führt Convolutions mit einem Kernel der Größe $3 \times 3$ oder $5 \times 5$ durch, wobei die Anzahl der Ausgabechannel meist zwischen 8 32 liegt. Die optimale Wahl dieser Anzahl ist abhängig von der auszuführenden Aufgabe und lässt sich am Besten in Tests herausfinden.
-
-Anschließend erfolgt ein Subsampling der Ausgabematrizen mit Pooling-Matrizen der Größe $2 \times 2$, handelt es sich jedoch um größere Bilder mit größeren Details kann auch in Matrizen der Größe $4 \times 4$ aufgeteilt werden. In der Regel wird Max-Pooling verwendet, das Testen von Mean-Pooling kann sich allerdings auch lohnen.
-
-Es folgt ein erneuter Convolutional Layer mit derselben Größe des Kernels und etwa doppelt so vielen Ausgabematrizen wie zuvor. Auch das anschließende Subsampling erfolgt mit Pooling-Matrizen derselben Größe wie in der vorherigen Subsampling-Schicht.
-
-Nach Bedarf kann auch eine erneute Convolution mit Subsampling eingebaut werden, ist jedoch meistens nicht nötig.
-
-Nach der letzten Subsampling-Schicht müssen alle Ausgabematrizen abgeflacht werden (engl. \enquote{Flattening}), indem alle Zeilen jeder Matrix aneinandergereiht werden, wodurch ein eindimensionaler Vektor entsteht.
-
-Dieser Vektor entspricht der Eingabe eines herkömmlichen neuronalen Netzes, bei dem jedes Neuron mit jedem Neuron der nächsten Schicht verbunden ist. In der Regel benötigt dieses Netz sogar nur eine versteckte Schicht, da sämtliche Eingaben bereits auf die relevantesten Informationen heruntergebrochen wurden und nur noch elementare boolesche Funktionen ausgeführt werden müssen.
-
 \begin{figure}[!h]
 \centering
 \begin{tikzpicture}[thick, main/.style={draw, circle, inner sep=0pt, minimum width=.25cm}]
@@ -631,8 +617,21 @@ Dieser Vektor entspricht der Eingabe eines herkömmlichen neuronalen Netzes, bei
 \caption{Exemplarischer Aufbau eines Convolutional Neural Networks}
 \label{fig:CNNArchitecture}
 \end{figure}
+Convolutional Neural Networks sind sowohl aus diesen Convolutional und Subsampling Layers, als auch aus den bereits bekannten vollständig verbundenen Schichten aufgebaut.
 
-\section{Resultate}
+Der im Folgenden beschriebene Aufbau ist in Abbildung \ref{fig:CNNArchitecture} dargestellt.
+
+Noch außerhalb des Netzes wird ein farbiges Bild in die drei Farbkomponenten rot, grün und blau aufgeteilt, sodass für jede eine einzelne Matrix entsteht mit Werten, die beschreiben, wie hoch der Anteil der jeweiligen Farbe an dem entsprechenden Pixel ist.
+
+Die entstandenen Matrizen entsprechen der Eingabe des ersten Convolutional Layer. Diese Schicht führt Convolutions mit einem Kernel der Größe $3 \times 3$ oder $5 \times 5$ durch, wobei die Anzahl der Ausgabechannel meist zwischen 8 32 liegt. Die optimale Wahl dieser Anzahl oder der Kernel-Größe ist abhängig von der auszuführenden Aufgabe und ihrer Komplexität sowie der Größe der Bilder. Am besten lassen sich die Werte in Tests ermitteln.
+
+Anschließend erfolgt ein Subsampling der Matrizen mit der Pooling-Größe $2 \times 2$, handelt es sich jedoch um größere Bilder mit größeren Details können diese aber auch mit der Pooling-Größe $4 \times 4$ verkleinert werden. Im Normalfall wird die Max-Pooling-Strategie verwendet, auf ein Testen mit Mean-Pooling sollte jedoch nicht ohne Weiteres verzichtet werden.
+
+Je nach Komplexität der zu erledigenden Aufgabe und der nach dem Pooling verbleibenden Größe der Feature Map folgen weitere Convolutions mit jeweils einem Subsampling Layer. Auch hier sind die einzelnen Werte der Schichten mit Feingefühl zu ermitteln und sollten zu Testzwecken ruhig verändert werden.
+
+Nach der letzten Subsampling-Schicht erfolgt ein Abflachen oder \enquote{Flattening} aller Matrizen, was in der Regel in einer eigenen Schicht realisiert wird. Dieses Abflachen geschieht durch Aneinanderreihen aller Zeilen aller Matrizen, wodurch letztendlich ein eindimensionaler Vektor entsteht.
+
+Dieser Vektor kann durch ein herkömmliches neuronales Netz propagiert werden. Da die Eingabe sehr abstrakte Eigenschaften beschreibt, die unmittelbar mit der zuzuordnenden Klasse in Verbindung stehen, wird hier in den meisten Fällen nicht mehr als eine versteckte Schicht benötigt.
 
 \bibliographystyle{gerplain}
 \bibliography{refs}
