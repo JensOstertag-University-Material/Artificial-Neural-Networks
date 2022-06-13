@@ -6,6 +6,8 @@
 \usepackage{wrapfig}
 \usepackage{graphicx}
 \usepackage{amssymb}
+\usepackage{listings}
+\usepackage{qrcode}
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric}
 
@@ -15,6 +17,10 @@
 \author{Jens Ostertag}
 \date{\today}
 
+\lstset{
+basicstyle=\fontsize{10}{10}\selectfont\ttfamily
+}
+
 \renewcommand*\contentsname{Inhaltsverzeichnis}
 
 \makeindex
@@ -23,7 +29,7 @@
 \maketitle
 \tableofcontents
 \clearpage
-\section{Computer lernen lassen}
+\section{Computer lernen lassen}\label{sec:Introduction}
 \textit{Künstliche Intelligenz}, \textit{Maschinelles Lernen} und \textit{Neuronale Netze} - Alle diese Begriffe sind gewissermaßen miteinander verbunden, denn ihre Technik beruht darauf, dass Computer lernen können. Vor einem tieferen Einblick möchte ich diese Begriffe jedoch einordnen und differenzieren.
 
 Bei einem \textit{künstlichen neuronalen Netz}\index{Neuronales Netz} handelt es sich um die Simulation des menschlichen Gehirns. Neuronale Netze sind die Grundlage für alles, das Lernen kann oder Entscheidungen treffen soll.
@@ -44,7 +50,7 @@ und natürlich in vielen weiteren aufwendigeren Prozessen.
 
 Im Folgenden soll es darum gehen, wie ein neuronales Netz funktioniert und wie man es mit maschinellem Lernen verwenden kann.
 
-\subsection{Aufbau neuronaler Netze \cite{NeuronaleNetzeImKlartext}}
+\subsection{Aufbau neuronaler Netze \cite{NeuronaleNetzeImKlartext}}\label{sec:BasicStructure}
 Künstliche neuronale Netze sind sehr stark an natürliche neuronale Netze angelehnt (zum Beispiel an das menschliche Gehirn), weshalb es sinnvoll ist, zuerst diese zu betrachten.
 
 Sogenannte \textit{Neuronen}\index{Neuron} (Nervenzellen) sind durch \textit{Synapsen}\index{Synapse} miteinander verbunden, welche für den Elektronenfluss zwischen jeweils zwei Neuronen mithilfe eines \textit{Synapsengewichts}\index{Synapsengewicht} verantwortlich sind. Mit diesem lässt sich die Anfälligkeit des nachgehenden Neurons auf das Signal des  vorhergehenden Neurons regulieren. \cite{Synapsengewicht}
@@ -155,10 +161,10 @@ mit
 
 Wörtlich bedeutet das, dass zuerst die Netzeingabe eines Neurons durch Addieren aller Produkte einer Ausgabe eines vorherigen Neurones mit dem jeweiligen Gewicht zwischen den beiden Neuronen berechnet wird. Die Ausgabe des Neurons lässt sich nun mit der \textit{Aktivierungsfunktion}\index{Aktivierungsfunktion} in Abhängigkeit dieser Summe berechnen. Eine Aktivierungsfunktion wird benötigt, damit ein neuronales Netz auch nicht-lineare Eigenschaften erlernen kann.
 
-\subsection{Drei Arten des maschinellen Lernens \cite{PythonMachineLearningChapter1}}\index{Maschinelles Lernen}
+\subsection{Drei Arten des maschinellen Lernens \cite{PythonMachineLearningChapter1}}\label{sec:MachineLearningTypes}\index{Maschinelles Lernen}
 Damit ein neuronales Netz lernt, müssen seine Gewichte angepasst werden. Dieser Vorgang wird auch Training genannt. Das kann auf drei unterschiedliche Arten erfolgen.
 
-\subsubsection{Überwachtes Lernen}\index{Überwachtes Lernen}\index{Maschinelles Lernen}
+\subsubsection{Überwachtes Lernen}\label{sec:SupervisedLearning}\index{Überwachtes Lernen}\index{Maschinelles Lernen}
 Das überwachte Lernen ist die wohl am häufigsten verwendete Methode, ein neuronales Netz zu trainieren. Es zielt darauf ab, auch zu bislang unbekannten Eingaben eine passende Ausgabe zu generieren, meistens geht es darum, die Eingaben in Gruppen bestimmter Eigenschaften einzuteilen. 
 
 Während des Trainingsvorgangs wird mithilfe eines Trainingsdatensatzes (einige Eingaben mit zugehörigen erwarteten Ausgaben) angelernt, welche Muster in den Eingabedaten zu bestimmten Ausgaben gehören. Erhält das Netz nach abgeschlossenem Training eine Eingabe, ist es in der Lage, ein Muster darin zu erkennen und anhand dessen eine passende Ausgabe zu generieren.
@@ -187,7 +193,7 @@ Während des Trainingsvorgangs wird mithilfe eines Trainingsdatensatzes (einige 
 
 In Abbildung \ref{fig:SupervisedLearning} sind in einem Diagramm mehrere Punkte unterschiedlicher Farben eingetragen, die jeweils einem $x$- und $y$-Wert zugeordnet sind. Jeder Punkt entspricht dabei einer Eingabe, alle Eingaben derselben Farbe gehören der gleichen Klasse an. Während des Trainings lernt das Netz beispielsweise, dass eine Eingabe mit hohem $x$- und niedrigem $y$-Wert in die grüne Klasse einteilen soll.
 
-\subsubsection{Unüberwachtes Lernen}\index{Unüberwachtes Lernen}\index{Maschinelles Lernen}
+\subsubsection{Unüberwachtes Lernen}\label{sec:UnsupervisedLearning}\index{Unüberwachtes Lernen}\index{Maschinelles Lernen}
 Das Ziel des unüberwachten Lernens ist es, innerhalb einer Menge von Eingaben Gruppen anhand ähnlicher Strukturen zu finden. Dafür wird keine Bearbeitung oder Sortierung der Daten benötigt.
 
 Daher ist diese Lernart besonders interessant für die Clusteranalyse, welche dasselbe Ziel anstrebt. Sie spielt besonders im Internet eine Rolle, wo Nutzer unterschiedlicher Zielgruppen unterschiedliche Inhalte, Produktvorschläge oder Werbungen angezeigt bekommen sollen.
@@ -214,7 +220,7 @@ Daher ist diese Lernart besonders interessant für die Clusteranalyse, welche da
 
 In Abbildung \ref{fig:UnsupervisedLearning} sind in einem Diagramm mehrere Punkte unterschiedlicher Farben eingetragen, die jeweils einem $x$- und $y$-Wert zugeordnet sind. Jeder Punkt entspricht dabei einer Eingabe. Anhand der Darstellung ist ersichtlich, dass die $x$- und $y$-Werte von Eingaben gleicher Farbe ähnlich sind, im Vergleich zu den Werten anderer Farben. Diese Ähnlichkeiten gilt es während des Lernvorgangs zu erkennen, sodass auch neu hinzukommende Daten einer der Gruppen zugeordnet werden könnte.
 
-\subsubsection{Bestärktes Lernen}\index{Bestärktes Lernen}\index{Maschinelles Lernen}
+\subsubsection{Bestärktes Lernen}\label{sec:ReinforcementLearning}\index{Bestärktes Lernen}\index{Maschinelles Lernen}
 Bestärktes Lernen dient dazu, den Entscheidungsprozess eines neuronales Netzes bezüglich einer bestimmten Tätigkeit zu trainieren.
 
 Dabei wird nach dem Belohnungs-Prinzip gearbeitet: Unterschiedliche Ausgaben erhalten verschiedene Bewertungen, eine Zahl, die einen Vergleich zwischen Gut und Schlecht ermöglichen soll. Eine \enquote{gute} Ausgabe wird belohnt, was darin resultiert, dass die jeweilige Entscheidung verstärkt wird. Entschied sich das Netz falsch, wird es nicht belohnt (oder sogar bestraft) und die Entscheidung wird geschwächt.
@@ -222,10 +228,10 @@ Während des Lernvorgangs wird stets versucht, die Bewertung zu maximieren, um i
 
 Die Bewertungen sind hierbei eine Art Feedback für das Netz, weshalb man auch von einer Art des überwachten Lernens sprechen kann.
 
-\subsection{Umgang mit neuronalen Netzen \cite{PythonMachineLearningChapter1}}
+\subsection{Umgang mit neuronalen Netzen \cite{PythonMachineLearningChapter1}}\label{sec:HandlingNetworks}
 Vor der Implementation maschinellen Lernens in einem Programm muss ein neuronales Netz entwickelt werden, das die gewünschte Aufgabe zuverlässig erledigen kann. Für die einzelnen Lernarten existieren standardisierte Abläufe, die von Netz zu Netz nahezu gleich sind. Im Folgenden wird der des überwachten Lernens vorgestellt.
 
-\subsubsection{Vorbereiten eines Trainingsdatensatzes}
+\subsubsection{Vorbereiten eines Trainingsdatensatzes}\label{sec:TrainingData}
 Zuerst müssen Daten gesammelt und zu einem \textit{Trainingsdatensatz}\index{Trainingsdatensatz} zusammengefügt werden.
 Bei allen Daten handelt es sich um mögliche Eingaben für das Netz. Sollen also beispielsweise Bilder von unterschiedlichen Objekten unterschieden werden, sind die Daten ebenfalls Bilder, auf denen die zu klassifizierenden Objekte enthalten sind.
 
@@ -233,31 +239,33 @@ Neben dem einfachen Zusammenstellen des Datensatzes kann es jedoch auch vorkomme
 
 Sämtliche Anpassungen der Daten müssen einheitlich und auch bei der Anwendung des Netzes mit unbekannten Daten erfolgen.
 
-Außerdem ist es für die bevorstehende Auswertung wichtig, dass ebenfalls ein \textit{Testdatensatz}\index{Testdatensatz} erstellt wird. Sein Aufbau ist gleich wie der des Trainingsdatensatzes, es sind lediglich andere Daten enthalten. 
+Außerdem ist es für die bevorstehende Auswertung (\ref{sec:Evaluation}) wichtig, dass ebenfalls ein \textit{Testdatensatz}\index{Testdatensatz} erstellt wird. Sein Aufbau ist gleich wie der des Trainingsdatensatzes, es sind lediglich andere Daten enthalten. 
 
-\subsubsection{Trainieren}\index{Training}
+\subsubsection{Trainieren}\label{sec:Training}\index{Training}
 Mit dem fertigen Trainingsdatensatz\index{Trainingsdatensatz} kann das neuronale Netz \textit{trainiert} werden. Dafür existieren unterschiedliche Trainingsalgorithmen, die sich auch zwischen besonderen Aufbauten neuronaler Netze und deren spezifischen Aufgaben unterscheiden können. 
 
 Je nach Aufgabe oder spezifischen Struktur des Netzes können die Algorithmen unterschiedlich gut abschließen. Daher ist es lohnenswert, das Training nicht nur auf einen der Algorithmen zu beschränken, sondern mehrere mit Bezug auf die durchzuführende Aufgabe zu testen.
 
-\subsubsection{Auswertung und Anwendung}\index{Auswertung}
-Nachdem das Training abgeschlossen wurde, ist es interessant zu wissen, mit welcher Genauigkeit oder Zuverlässigkeit eine Aufgabe ausgeführt wird. Dafür kommt der zuvor erstellte Testdatensatz\index{Testdatensatz} in Einsatz, mit dem die Anzahl der falschen bzw. unerwünschten Ausgaben ermittelt wird und der somit eine Einschätzung des Netzes möglich macht.
+\subsubsection{Auswertung und Anwendung}\label{sec:Evaluation}\index{Auswertung}
+Nachdem das Training abgeschlossen wurde, ist es interessant zu wissen, mit welcher Genauigkeit oder Zuverlässigkeit eine Aufgabe ausgeführt wird. Dafür kommt der zuvor erstellte Testdatensatz\index{Testdatensatz} (\ref{sec:TrainingData}) in Einsatz, mit dem die Anzahl der falschen bzw. unerwünschten Ausgaben ermittelt wird und der somit eine Einschätzung des Netzes möglich macht.
+
+Für diese Auswertung ist es wichtig, dass der Testdatensatz nicht dieselben Daten enthält wie der Trainingsdatensatz, was simulieren soll, wie sich das Netz mit bislang unbekannten Daten verhält. Würde man das neuronale Netz mit den Trainingsdaten evaluiert werden, könnte es im schlechtesten Fall vorkommen, dass das Netz jedes kleinste Detail einer bekannten Eingabe anlernt, zu anderen Daten allerdings nahezu zufällige Ausgaben erzeugt. Eine solche Entwicklung wird auch \textit{Overfitting}\index{Overfitting} genannt. Dabei muss es sich jedoch nicht zwangsläufig um den hier beschriebenen Fall handeln, Overfitting kann auch eine Erscheinung sein, welche dann auftritt, wenn ein Training besonders viele Iterationen in Anspruch nimmt.
 
 Wenn die Aufgabe zufriedenstellend abgeschlossen wird, können die Gewichte und die Konfiguration des Netzes in Dateien abgespeichert und in einem Anwendungsprogramm importiert. Das ermöglicht eine Rekonstruktion des neuronalen Netzes ohne großen Zeitaufwand und ohne erneut ein Training durchführen zu müssen.
 
-\section{Deep Convolutional Neural Networks \cite{PythonMachineLearningChapter15}}\index{Neuronales Netz}\index{Convolutional Neural Network}
+\section{Deep Convolutional Neural Networks \cite{PythonMachineLearningChapter15}}\label{sec:DCNN}\index{Neuronales Netz}\index{Convolutional Neural Network}
 Deep \textit{Convolutional Neural Networks} sind besondere Formen der neuronalen Netze\index{Neuronales Netz}, die besonders in der Bilderkennung und -Klassifikation\index{Bildklassifikation} sehr häufig verwendet werden. Grund dafür ist, dass sie viel schneller und besser trainiert werden können als herkömmliche neuronale Netze. Während diese eine Genauigkeit von über 80\% erst nach mehreren Trainingsepochen erreichen, lernen Deep Convolutional Neural Networks innerhalb weniger Epochen ein Bild mit einer Wahrscheinlichkeit von über 95\% korrekt zu klassifizieren.
 
 Das ist auf deren Aufbau und Lernweise zurückzuführen, welche der des Menschen noch mehr ähnelt als die herkömmlicher neuronaler Netze.
 
-\subsection{Convolutional Layer}\index{Convolutional Layer}
+\subsection{Convolutional Layer}\label{sec:ConvolutionalLayer}\index{Convolutional Layer}
 Verwendet man ein übliches neuronales Netz für die Bildklassifikation, ist die Relevanz zweier nebeneinanderliegender Pixel genauso hoch wie die von weit entfernten Pixeln. Das folgt daraus, dass die Ausgabe jedes Neurons an jedes Neuron der Folgeschicht propagiert wird.
 
 In einem Convolutional Layer ist das anders: Mithilfe eines \textit{Kernels}\index{Kernel} werden aus nebeneinanderliegenden Pixeln Eigenschaften erkannt. Erkennbare Eigenschaften beschränken sich in den höheren Schichten auf einfache Formen wie zum Beispiel Kanten, je tiefer sich eine Schicht jedoch im Netz befindet, kann diese immer komplexere Objekte anhand von Konturen unterscheiden.
 
 Um das zu erreichen, wird die \textit{Convolution}\index{Convolution}, oder eine Vereinfachung, die häufiger in Machine-Learning-Frameworks implementiert ist, die\textit{ Cross Correlation}\index{Cross Correlation}, angewandt.
 
-\subsubsection{Eindimensionale Cross Correlation}\index{Cross Correaltion}
+\subsubsection{Eindimensionale Cross Correlation}\label{sec:CrossCorrelation1D}\index{Cross Correaltion}
 Als \textit{Cross Correlation} wird im Folgenden eine Operation mit einem Eingabevektor $x$ und einem \textit{Kernel}\index{Kernel} $w$ betrachtet, aus dem ein Ausgabevektor $y$ berechnet werden soll. Die Cross Correlation ist eine Vereinfachung der \textit{Convolution}\index{Convolution}, wobei der Unterschied im Wesentlichen darin besteht, dass der Kernel bei der Convolution zuerst gespiegelt werden muss.
 
 Mit der Bedingung
@@ -357,7 +365,7 @@ Es ist offensichtlich, dass die Länge des Ausgabevektors $y$ unter diesen Bedin
 \label{fig:CrossCorrelationWithPadding}
 \end{figure}
 
-\subsubsection{Zweidimensionale Cross Correlation}\index{Cross Correlation}
+\subsubsection{Zweidimensionale Cross Correlation}\label{sec:CrossCorrelation2D}\index{Cross Correlation}
 Bilder sind allerdings nicht eindimensional, weshalb die zweidimensionale Cross Correlation benötigt wird. 
 
 Unter Definition der Variablen
@@ -452,7 +460,7 @@ beschrieben werden, anhand des Schemas und Abbildung \ref{fig:CrossCorrelation2D
 
 Auch hier wird die Kernel-Matrix\index{Kernel} $W$ an die Eingabematrix $X^p$ angelegt und verschoben, um die Werte der Ausgabe $Y$ durch Addieren der Produkte zu berechnen. Es ist jedoch zu beachten, dass $W$ in diesem Fall in beide Richtungen verschoben wird, sodass eine zweidimensionale Ausgabe entsteht.
 
-\subsubsection{Praktische Anwendung}
+\subsubsection{Praktische Anwendung}\label{sec:PracticalConvolution}
 In der Praxis muss ein \textit{Convolutional Layer}\index{Convolutional Layer} mehrere zweidimensionale Eingabematrizen annehmen können, da beispielsweise Bilder nicht (alle) einfarbig sind. Daher werden mehrere Eingabechannel\index{Channel} definiert, für jede Eingabematrix einer. Um beispielsweise ein Farbbild einzugeben, würden 3 Channel benötigt, da ein solches Bild in die Farben rot, grün und blau unterteilt ist.
 
 Auch die Anzahl der Ausgabematrizen soll für jede Schicht variabel, aber konstant sein. Jede Eingabematrix hat dabei einen Einfluss auf jede Ausgabematrix.
@@ -471,7 +479,7 @@ A_i = \varphi (Y_i)
 \]
 eine sogenannte \textit{Feature Map}\index{Feature Map}. Diese enthalten in tieferen Schichten immer abstrakter werdende Eigenschaften der zu klassifizierenden Objekte, welche eine viel genauere Erkennung eines Objekts ermöglicht.
 
-\subsection{Subsampling Layer}\index{Subsampling}\index{Subsampling Layer}
+\subsection{Subsampling Layer}\label{sec:SubsamplingLayer}\index{Subsampling}\index{Subsampling Layer}
 \textit{Subsampling Layers} kommen in neuronalen Netzen vor, um die Menge an Eigenschaften einer Eingabe mittels \textit{Pooling-Operationen}\index{Pooling} zu verringern. Das resultiert in einem deutlich schnelleren Trainingsvorgang mit nur geringerem Leistungsverlust, da nach einem Subsampling Layer deutlich weniger Gewichte angepasst werden müssen.
 
 Eine Eingabe $X$ wird in mehrere kleine Pooling-Matrizen $P$ aufgeteilt. Ab diesem Punkt können zwei unterschiedliche Arten angewandt werden: Bei \textit{Max-Pooling} wird jeweils der größte Wert der Pooling-Matrix in die Ausgabe weitergeleitet, bei \textit{Mean-Pooling} wird der Durchschnitt aller darin enthaltenen Werte ermittelt.
@@ -518,7 +526,7 @@ Eine Eingabe $X$ wird in mehrere kleine Pooling-Matrizen $P$ aufgeteilt. Ab dies
 
 Subsampling Layer selbst haben keine Gewichte sondern beruhen auf simplen mathematischen Berechnungen wie dem Durchschnitt oder einem Größenvergleich.
 
-\subsection{Aufbau Convolutional Neural Networks}\index{Neuronales Netz}\index{Convolutional Neural Network}
+\subsection{Aufbau Convolutional Neural Networks}\label{sec:CNNArchitecture}\index{Neuronales Netz}\index{Convolutional Neural Network}
 \begin{figure}[!h]
 \centering
 \begin{tikzpicture}[thick, main/.style={draw, circle, inner sep=0pt, minimum width=.25cm}]
@@ -633,7 +641,7 @@ Die entstandenen Matrizen entsprechen der Eingabe des ersten Convolutional Layer
 
 Anschließend erfolgt ein Subsampling\index{Subsampling}\index{Subsampling Layer} der Matrizen mit der Pooling-Größe $2 \times 2$, handelt es sich jedoch um größere Bilder mit größeren Details können diese aber auch mit der Pooling-Größe $4 \times 4$ verkleinert werden. Im Normalfall wird die Max-Pooling-Strategie\index{Pooling} verwendet, auf einen Vergleich mit Mean-Pooling sollte jedoch nicht ohne Weiteres verzichtet werden.
 
-Je nach Komplexität der zu erledigenden Aufgabe und der nach dem Pooling verbleibenden Größe der Feature Map\index{Feature Map} folgen weitere Convolutions\index{Convolution}\index{Cross Correlation} mit jeweils einem Subsampling Layer\index{Subsampling Layer}. Auch hier sind die einzelnen Werte der Schichten mit Feingefühl zu ermitteln und sollten zu Testzwecken verändert werden.
+Je nach Komplexität der zu erledigenden Aufgabe und der nach dem Pooling verbleibenden Größe der Feature Map\index{Feature Map} folgen weitere Convolutions\index{Convolution}\index{Cross Correlation}\index{Convolutional Layer} mit jeweils einem Subsampling Layer\index{Subsampling Layer}. Auch hier sind die einzelnen Werte der Schichten mit Feingefühl zu ermitteln und sollten zu Testzwecken verändert werden.
 
 Nach der letzten Subsampling-Schicht\index{Subsampling Layer} erfolgt ein Abflachen oder \textit{Flattening}\index{Flattening} aller Matrizen, was in der Regel in einer eigenen Schicht\index{Flattening Layer} realisiert wird. Dieses Abflachen geschieht durch Aneinanderreihen der Zeilen aller Matrizen, wodurch letztendlich ein eindimensionaler Vektor entsteht.
 
