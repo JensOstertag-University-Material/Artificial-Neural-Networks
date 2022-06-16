@@ -8,12 +8,13 @@
 \usepackage{amssymb}
 \usepackage{listings}
 \usepackage{qrcode}
+\usepackage{subcaption}
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric}
 
 \usepackage{imakeidx}
 
-\title{\textbf{Proseminar\\Künstliche neuronale Netze}}
+\title{\textbf{Proseminar\\Künstliche neuronale Netze\\Deep Convolutional Neural Networks}}
 \author{Jens Ostertag}
 \date{\today}
 
@@ -254,7 +255,7 @@ Für diese Auswertung ist es wichtig, dass der Testdatensatz nicht dieselben Dat
 Wenn die Aufgabe zufriedenstellend abgeschlossen wird, können die Gewichte und die Konfiguration des Netzes in Dateien abgespeichert und in einem Anwendungsprogramm importiert. Das ermöglicht eine Rekonstruktion des neuronalen Netzes ohne großen Zeitaufwand und ohne erneut ein Training durchführen zu müssen.
 
 \section{Deep Convolutional Neural Networks \cite{PythonMachineLearningChapter15}}\label{sec:DCNN}\index{Neuronales Netz}\index{Convolutional Neural Network}
-Deep \textit{Convolutional Neural Networks} sind besondere Formen der neuronalen Netze\index{Neuronales Netz}, die besonders in der Bilderkennung und -Klassifikation\index{Bildklassifikation} sehr häufig verwendet werden. Grund dafür ist, dass sie viel schneller und besser trainiert werden können als herkömmliche neuronale Netze. Während diese eine Genauigkeit von über 80\% erst nach mehreren Trainingsepochen erreichen, lernen Deep Convolutional Neural Networks innerhalb weniger Epochen ein Bild mit einer Wahrscheinlichkeit von über 95\% korrekt zu klassifizieren.
+Deep \textit{Convolutional Neural Networks} (CNN) - im Deutschen \textit{Faltungsnetze}\index{Faltungsnetz} - sind besondere Formen der neuronalen Netze\index{Neuronales Netz}, die besonders in der Bilderkennung und -Klassifikation\index{Bildklassifikation} sehr häufig verwendet werden. Grund dafür ist, dass sie viel schneller und besser trainiert werden können als herkömmliche neuronale Netze. Während diese eine Genauigkeit von über 90\% erst spät erreichen, lernen CNN's innerhalb weniger Epochen ein Bild mit einer Wahrscheinlichkeit von über 95\% korrekt zu klassifizieren.
 
 Das ist auf deren Aufbau und Lernweise zurückzuführen, welche der des Menschen noch mehr ähnelt als die herkömmlicher neuronaler Netze.
 
@@ -482,8 +483,6 @@ eine sogenannte \textit{Feature Map}\index{Feature Map}. Diese enthalten in tief
 \subsection{Subsampling Layer}\label{sec:SubsamplingLayer}\index{Subsampling}\index{Subsampling Layer}
 \textit{Subsampling Layers} kommen in neuronalen Netzen vor, um die Menge an Eigenschaften einer Eingabe mittels \textit{Pooling-Operationen}\index{Pooling} zu verringern. Das resultiert in einem deutlich schnelleren Trainingsvorgang mit nur geringerem Leistungsverlust, da nach einem Subsampling Layer deutlich weniger Gewichte angepasst werden müssen.
 
-Eine Eingabe $X$ wird in mehrere kleine Pooling-Matrizen $P$ aufgeteilt. Ab diesem Punkt können zwei unterschiedliche Arten angewandt werden: Bei \textit{Max-Pooling} wird jeweils der größte Wert der Pooling-Matrix in die Ausgabe weitergeleitet, bei \textit{Mean-Pooling} wird der Durchschnitt aller darin enthaltenen Werte ermittelt.
-
 \begin{figure}[!h]
 \centering
 \begin{tikzpicture}[thick, main/.style={draw, rectangle, inner sep=0pt, minimum width=.5cm, minimum height=.5cm}]
@@ -524,9 +523,11 @@ Eine Eingabe $X$ wird in mehrere kleine Pooling-Matrizen $P$ aufgeteilt. Ab dies
 \caption{Max- und Mean-Pooling}
 \end{figure}
 
+Eine Eingabe $X$ wird in mehrere kleine Pooling-Matrizen $P$ aufgeteilt. Ab diesem Punkt können zwei unterschiedliche Arten angewandt werden: Bei \textit{Max-Pooling} wird jeweils der größte Wert der Pooling-Matrix in die Ausgabe weitergeleitet, bei \textit{Mean-Pooling} wird der Durchschnitt aller darin enthaltenen Werte ermittelt.
+
 Subsampling Layer selbst haben keine Gewichte sondern beruhen auf simplen mathematischen Berechnungen wie dem Durchschnitt oder einem Größenvergleich.
 
-\subsection{Aufbau Convolutional Neural Networks}\label{sec:CNNArchitecture}\index{Neuronales Netz}\index{Convolutional Neural Network}
+\subsection{Aufbau von CNN's}\label{sec:CNNArchitecture}\index{Neuronales Netz}\index{Convolutional Neural Network}\index{Faltungsnetz}
 \begin{figure}[!h]
 \centering
 \begin{tikzpicture}[thick, main/.style={draw, circle, inner sep=0pt, minimum width=.25cm}]
@@ -646,6 +647,191 @@ Je nach Komplexität der zu erledigenden Aufgabe und der nach dem Pooling verble
 Nach der letzten Subsampling-Schicht\index{Subsampling Layer} erfolgt ein Abflachen oder \textit{Flattening}\index{Flattening} aller Matrizen, was in der Regel in einer eigenen Schicht\index{Flattening Layer} realisiert wird. Dieses Abflachen geschieht durch Aneinanderreihen der Zeilen aller Matrizen, wodurch letztendlich ein eindimensionaler Vektor entsteht.
 
 Dieser Vektor kann durch ein herkömmliches, vollständig verbundenes neuronales Netz\index{Neuronales Netz} propagiert werden. Da die Eingabe sehr abstrakte Eigenschaften beschreibt, die unmittelbar mit der zuzuordnenden Klasse in Verbindung stehen, wird hier in den meisten Fällen nicht mehr als eine versteckte Schicht\index{Versteckte Schicht}\index{Hidden Layer} benötigt.
+
+\subsection{Ziffernerkennung mit einem Convolutional Neural Network}\label{sec:Application}
+\subsubsection{Der MNIST-Datensatz}\label{sec:MNISTDataset}\index{MNIST-Datensatz}
+Beim MNIST-Datensatz handelt es sich um einen einfachen Bilderkennungs-Datensatz, der wegen seiner Simplizität und Bekanntheit gerne als Einstiegs- oder Testbeispiel verwendet wird.
+
+Er umfasst 70.000 Graustufen-Bilder der Größe $28 \times 28$ Pixel, wobei jedes Bild eine handgeschriebene Ziffer von 0 bis 9 enthält. Das Ziel des Netzes soll es sein, die Bilder eindeutig einer der Ziffern zuzuordnen.
+
+\subsubsection{Das TensorFlow-Framework}\label{sec:TensorFlow}\index{TensorFlow}
+TensorFlow ist ein Open-Source Machine-Learning-Framework von Google, das hauptsächlich auf die Programmiersprachen Python und C++ ausgelegt ist, jedoch auch mit vielen weiteren kompatibel ist. Mit der Version 2.0 werden mittlerweile nahezu alle Architekturen neuronaler Netze unterstützt, wodurch es im Bereich des Data Science sehr beliebt wurde.
+
+Mit TensorFlow hat man die Möglichkeit, sein eigenes neuronales Netz mit selbst gewählten Parametern Schicht für Schicht zusammenzustellen. Das ermöglicht jedem, selbst einen idealen Aufbau zu finden, der die Aufgabe am Besten erfüllt. Das Training, und somit der schwierigere Teil, wird allerdings vom Framework abgenommen.
+
+\subsubsection{Ziffernerkennung}
+Im Folgenden soll TensorFlow dazu verwendet werden, die Daten des MNIST-Datensatzes mit einem CNN\index{Convolutional Neural Network}\index{Faltungsnetz} zu klassifizieren. Anschließend erfolgt ein Vergleich der erreichten Ergebnisse mit denen eines vollständig verbundenen neuronalen Netzes.
+
+Sämtlicher Code kann unter
+\begin{center}
+\footnotesize\url{https://colab.research.google.com/drive/1n-t1O-3lq-VovD4DCZmhpc9q8Ht4n4At}
+\end{center} 
+abgerufen werden. Alternativ befindet sich am Ende des Kapitels ein QR-Code zum Scannen.
+
+\subsubsection*{Laden des MNIST-Datensatzes in TensorFlow}
+Mit dem folgenden Code wird das TensorFlow-Framework eingebunden und der MNIST-Datensatz heruntergeladen. Im Anschluss werden die Farbanteile von einem ursprünglichen Bereich von 0 bis 255 auf 0 bis 1 skaliert und eine Daten in Trainings- und Testdatensatz eingeteilt, jeweils mit einer Batch-Größe von 64 Daten. Das bedeutet, dass mit einer Trainings-Iteration 64 Daten trainiert werden.
+\begin{lstlisting}[language=Python]
+import tensorflow as tf
+import tensorflow_datasets as tfds
+
+## Build Datasets
+mnist_builder = tfds.builder('mnist')
+mnist_builder.download_and_prepare()
+datasets = mnist_builder.as_dataset(shuffle_files=False)
+mnist_train_data = datasets['train']
+mnist_test_data = datasets['test']
+
+mnist_train = mnist_train_data.map(
+    lambda item: 
+    (tf.cast(item['image'], tf.float32)/255.0,
+     tf.cast(item['label'], tf.int32))
+)
+mnist_test = mnist_test_data.map(
+    lambda item: 
+    (tf.cast(item['image'], tf.float32)/255.0, 
+     tf.cast(item['label'], tf.int32))
+)
+tf.random.set_seed(1)
+mnist_train = mnist_train.shuffle(
+    buffer_size=64, 
+    reshuffle_each_iteration=False
+)
+
+mnist_validate = mnist_test.take(10000).batch(64)
+mnist_train = mnist_train.skip(10000).batch(64)
+\end{lstlisting}
+
+\subsubsection*{Aufbau des Netzes}
+Das neuronale Netz soll zunächst gleich aufgebaut sein wie in Abbildung \ref{fig:CNNArchitecture} dargestellt. Dafür werden jeweils zwei Convolutional- und Subsampling-Layer benögigt\index{Convolutional Layer}\index{Subsampling Layer}, gefolgt von einem Flattening Layer\index{Flattening Layer} und zwei vollständig verbundenen Schichten\index{Versteckte Schicht}\index{Hidden Layer}.
+\begin{lstlisting}[language=Python]
+## Build Model
+model = tf.keras.Sequential()
+
+## Convolutional and Pooling Layers
+model.add(tf.keras.layers.Conv2D(
+    filters=8, 
+    kernel_size=(3, 3), 
+    strides=(1, 1), 
+    padding='same', 
+    data_format='channels_last', 
+    name='conv1', 
+    activation='relu'
+))
+model.add(tf.keras.layers.AveragePooling2D(
+    pool_size=(2, 2), 
+    name='pool1'
+))
+model.add(tf.keras.layers.Conv2D(
+    filters=16, 
+    kernel_size=(3, 3), 
+    strides=(1, 1), 
+    padding='same', 
+    data_format='channels_last', 
+    name='conv2', 
+    activation='relu'
+))
+model.add(tf.keras.layers.AveragePooling2D(
+    pool_size=(2, 2), 
+    name='pool2'
+))
+
+## Flattening Layer
+model.add(tf.keras.layers.Flatten())
+
+## Fully Connected Layers
+model.add(tf.keras.layers.Dense(
+    units=1024, 
+    name='fc1', 
+    activation='relu'
+))
+model.add(tf.keras.layers.Dense(
+    units=10, 
+    name='fc2', 
+    activation='softmax'
+))
+
+## Compile the Model
+tf.random.set_seed(1)
+model.build(input_shape=(None, 28, 28, 1))
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(), 
+    loss=tf.keras.losses.SparseCategoricalCrossentropy(), 
+    metrics=['accuracy']
+)
+\end{lstlisting}
+
+\subsubsection*{Training}
+Das erzeugte neuronale Netz wird anschließend mit dem Methodenaufruf
+\begin{lstlisting}[language=Python]
+model.fit(
+    mnist_train, 
+    epochs=5, 
+    validation_data=mnist_validate
+)
+\end{lstlisting}
+trainiert. Die Anzahl der Trainingsiterationen, hier \textit{Epoche} genannt, ist dabei auf 5 begrenzt. 
+
+\subsubsection*{Ergebnisse}
+In Abbildung \ref{fig:TrainingComparison} sind die Trainingsverläufe dieses CNN's\index{Convolutional Neural Network}\index{Faltungsnetz} und eines herkömmlichen neuronalen Netzes\index{Neuronales Netz} über den Verlauf der fünf Epochen dargestellt. Es fällt auf, dass das herkömmliche neuronale Netz immer schlechter abschneidet als das CNN, auch nicht, wenn noch mehr Epochen erlaubt werden. Es sei jedoch angemerkt, dass eine hier erreichte Genauigkeit von etwa 98\% für ein einfaches, vollständig verbundenes neuronales Netz äußerst zufriedenstellend ist. Üblich sind Werte um etwa 90\%.
+
+\begin{figure}[!h]
+\centering
+\begin{subfigure}{.49\textwidth}
+\centering
+\begin{tikzpicture}
+\draw[->] (0, 0) -- (0, 5.5) node[below right] {Genauigkeit};
+\draw[->] (0, 0) -- (4.5, 0) node[above left] {Epoche};
+
+\draw[-] (-.15, 0) node[left] {0.95} -- (0, 0);
+\draw[-] (-.15, 1) node[left] {0.96} -- (0, 1);
+\draw[-] (-.15, 2) node[left] {0.97} -- (0, 2);
+\draw[-] (-.15, 3) node[left] {0.98} -- (0, 3);
+\draw[-] (-.15, 4) node[left] {0.99} -- (0, 4);
+\draw[-] (-.15, 5) node[left] {1.00} -- (0, 5);
+
+\draw[-] (0, -.15) node[below] {1} -- (0, 0);
+\draw[-] (1, -.15) node[below] {2} -- (1, 0);
+\draw[-] (2, -.15) node[below] {3} -- (2, 0);
+\draw[-] (3, -.15) node[below] {4} -- (3, 0);
+\draw[-] (4, -.15) node[below] {5} -- (4, 0);
+
+\draw[-][red] (0, 2.88) -- (1, 3.12) -- (2, 3.31) -- (3, 3.73) -- (4, 3.71);
+\end{tikzpicture}
+\caption{CNN}
+\label{fig:TrainingCNN}
+\end{subfigure}
+\begin{subfigure}{.49\textwidth}
+\centering
+\begin{tikzpicture}
+\draw[->] (0, 0) -- (0, 5.5) node[below right] {Genauigkeit};
+\draw[->] (0, 0) -- (4.5, 0) node[above left] {Epoche};
+
+\draw[-] (-.15, 0) node[left] {0.95} -- (0, 0);
+\draw[-] (-.15, 1) node[left] {0.96} -- (0, 1);
+\draw[-] (-.15, 2) node[left] {0.97} -- (0, 2);
+\draw[-] (-.15, 3) node[left] {0.98} -- (0, 3);
+\draw[-] (-.15, 4) node[left] {0.99} -- (0, 4);
+\draw[-] (-.15, 5) node[left] {1.00} -- (0, 5);
+
+\draw[-] (0, -.15) node[below] {1} -- (0, 0);
+\draw[-] (1, -.15) node[below] {2} -- (1, 0);
+\draw[-] (2, -.15) node[below] {3} -- (2, 0);
+\draw[-] (3, -.15) node[below] {4} -- (3, 0);
+\draw[-] (4, -.15) node[below] {5} -- (4, 0);
+
+\draw[-][red] (0, 1.65) -- (1, 2.51) -- (2, 2.56) -- (3, 2.61) -- (4, 2.5);
+\end{tikzpicture}
+\caption{FCNN}
+\label{fig:TrainingFCNN}
+\end{subfigure}
+\caption{Trainingsverlauf eines CNN's (\ref{fig:TrainingCNN}) im Vergleich zu einem herkömmlichen neuronalen Netz (\ref{fig:TrainingFCNN})}
+\label{fig:TrainingComparison}
+\end{figure}
+
+\subsubsection*{Code}
+Der folgende Link verweist auf ein Notebook in Google Colab, welches u. A. das Ausführen von Python-Code in der Cloud ermöglicht.\\[5pt]
+\footnotesize\url{https://colab.research.google.com/drive/1n-t1O-3lq-VovD4DCZmhpc9q8Ht4n4At}\\[5pt]
+\qrcode{https://colab.research.google.com/drive/1n-t1O-3lq-VovD4DCZmhpc9q8Ht4n4At}
 
 \bibliographystyle{gerplain}
 \bibliography{refs}
