@@ -14,7 +14,7 @@
 
 \usepackage{imakeidx}
 
-\title{\textbf{Proseminar\\Künstliche neuronale Netze\\Deep Convolutional Neural Networks}}
+\title{\textbf{Künstliche neuronale Netze\\Deep Convolutional Neural Networks}}
 \author{Jens Ostertag}
 \date{\today}
 
@@ -37,7 +37,7 @@ Bei einem \textit{künstlichen neuronalen Netz}\index{Neuronales Netz} handelt e
 
 \textit{Maschinelles Lernen}\index{Maschinelles Lernen} beschreibt das Lernen eines solchen neuronales Netzes. Wie auch der Mensch, ist ein künstliches neuronales Netz in der Lage, sich unterschiedliche Fähigkeiten anzueignen, unabhängig von der Komplexität der jeweiligen Aufgabe. Dadurch wird beispielsweise ermöglicht, dass ein Computer Bilder erkennt und klassifiziert oder die Position bestimmter Objekte darin bestimmen kann.
 
-Die \textit{künstliche Intelligenz}\index{Künstliche Intelligenz} ist die undefinierteste Form neuronaler Netze, was auch damit zusammenhängt, dass es keine sehr genaue Definition von Intelligenz gibt. Ist man intelligent, wenn man schnell rechnen kann? Somit ist bereits ein simpler Taschenrechner von vor 40 Jahren äußerst intelligent. Oder bedeutet Intelligenz, dass man selbstständig denken und fühlen können muss, in dessen Zusammenhang der Begriff \enquote{Künstliche Intelligenz} auch meistens verwendet wird?
+Die \textit{künstliche Intelligenz}\index{Künstliche Intelligenz} ist die undefinierteste Form neuronaler Netze, was auch damit zusammenhängt, dass es keine sehr genaue Definition von Intelligenz gibt. Ist man intelligent, wenn man schnell rechnen kann? Unter dieser Voraussetzung wäre bereits ein simpler Taschenrechner von vor 40 Jahren äußerst intelligent. Oder bedeutet Intelligenz, dass man selbstständig denken und fühlen können muss, in dessen Zusammenhang der Begriff \enquote{Künstliche Intelligenz} auch meistens verwendet wird?
 Aufgrund dieser Undefiniertheit wird im Folgenden, sofern möglich, auf diesen Begriff verzichtet.
 
 Obwohl die Theorie schon etwas länger existiert, erfolgte ein großer Vorsprung in der Entwicklung des maschinellen Lernens erst in den letzten Jahren. Auch wenn es zuerst nicht so scheint, kommt heute jeder täglich damit in Berührung, beispielsweise
@@ -830,8 +830,17 @@ In Abbildung \ref{fig:TrainingComparison} sind die Trainingsverläufe dieses CNN
 
 \subsubsection*{Code}
 Der folgende Link verweist auf ein Notebook in Google Colab, welches u. A. das Ausführen von Python-Code in der Cloud ermöglicht.\\[5pt]
-\footnotesize\url{https://colab.research.google.com/drive/1n-t1O-3lq-VovD4DCZmhpc9q8Ht4n4At}\\[5pt]
+{\footnotesize\url{https://colab.research.google.com/drive/1n-t1O-3lq-VovD4DCZmhpc9q8Ht4n4At}}\\[5pt]
 \qrcode{https://colab.research.google.com/drive/1n-t1O-3lq-VovD4DCZmhpc9q8Ht4n4At}
+
+\section{Resultate}
+Mit einem künstlichen neuronalen Netz wird einem Computerprogramm ermöglicht, wie der Mensch zu denken oder Entscheidungen zu treffen, wobei ein Netz jedoch meistens nur auf eine bestimmte Aufgabe ausgelegt ist. Für einzelne Aufgaben existieren ebenfalls unterschiedliche Architekturen neuronaler Netze, für die Bilderkennung verwendet man beispielsweise Faltungsnetze, welche die relevanten Informationen eines Bildes extrahieren. Objekte können dadurch ähnlich gut klassifiziert werden wie von einem Menschen (vgl. Kapitel \ref{sec:TensorFlow}).
+
+Aufgrund dieser Genauigkeit haben neuronale Netze auch dort großes Potenzial, wo Fehler auch schwere Folgen haben können:
+
+Nahezu die einzige Entscheidungsgrundlage eines selbstfahrenden Autos sind die Aufnahmen von Kameras. Um rechtzeitig zu lenken, bremsen oder zu beschleunigen müssen die Bilder innerhalb von Bruchteilen einer Sekunde ausgewertet werden. Oft ist eine Entscheidung des Fahrzeugs besonders in Gefahrensituationen sicherer, da alle Kameras gleichzeitig ausgewertet werden und nicht nur die Kamera in eine Richtung. Außerdem ist eine Berechnung weiter Informationen möglich, zum Beispiel ob ein Bremsweg ausreicht oder ob ein Ausweichmaneuver nötig ist.
+
+Auch im medizinischen Bereich unterstützen neuronale Netze Ärzte bei beispielsweise der Auswertung bildgebender Verfahren. Mögliche Entscheidungskriterien, zum Beispiel Unregelmäßigkeiten, werden dabei hervorgehoben um die Diagnose zu erleichtern. Auch dafür eignen sich Faltungsnetze. \cite{HelpInMedicine}
 
 \bibliographystyle{gerplain}
 \bibliography{refs}
