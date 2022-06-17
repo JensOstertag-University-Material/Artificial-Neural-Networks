@@ -741,15 +741,25 @@ Zudem existieren, wie in Kapitel \ref{sec:CNNArchitecture} erwähnt, viele unter
 
 \begin{figure}[!h]
 \centering
-\begin{tabular}{| r || c | c | c | c | c | c | c |}
+\begin{tabular}{| r || c | c | c | c |}
 \hline
-\textbf{CS-Anzahl*} & 2 & 2 & 2 & 2 & 2 & 2 & 1 \\\hline\hline
-\textbf{Kernel-Größe} & $3 \times 3$ & $5 \times 5$ & $3 \times 3$ & $3 \times 3$ & $3 \times 3$ & $3 \times 3$ & $3 \times 3$ \\\hline
-\textbf{Padding-Art} & Same & Same & Valid & Same & Same & Same & Same \\\hline\hline
-\textbf{Pooling-Größe} & 2 & 2 & 2 & 2 & 2 & 2 & 2 \\\hline
-\textbf{Pooling-Art} & Max & Max & Max & Mean & Max & Max & Max \\\hline\hline
-\textbf{Verst. Neuronen} & 1024 & 1024 & 1024 & 1024 & 512 & 2048 & 1024 \\\hline\hline
-\textbf{Genauigkeit} &  &  &  &  &  &  &  \\\hline
+\textbf{CS-Anzahl*} & 2 & 2 & 2 & 2 \\\hline\hline
+\textbf{Kernel-Größe} & $3 \times 3$ & $5 \times 5$ & $3 \times 3$ & $3 \times 3$ \\\hline
+\textbf{Padding-Art} & Same & Same & Valid & Same \\\hline\hline
+\textbf{Pooling-Größe} & 2 & 2 & 2 & 2 \\\hline
+\textbf{Pooling-Art} & Max & Max & Max & Mean \\\hline\hline
+\textbf{Verst. Neuronen} & 1024 & 1024 & 1024 & 1024 \\\hline\hline
+\textbf{Genauigkeit} & 0.9868 & 0.9876 & 0.9840 & 0.9871 \\\hline
+\end{tabular}\\[5pt]
+\begin{tabular}{| r || c | c | c|}
+\hline
+\textbf{CS-Anzahl*} & 2 & 2 & 1 \\\hline\hline
+\textbf{Kernel-Größe} & $3 \times 3$ & $3 \times 3$ & $3 \times 3$ \\\hline
+\textbf{Padding-Art} & Same & Same & Same \\\hline\hline
+\textbf{Pooling-Größe} & 2 & 2 & 2 \\\hline
+\textbf{Pooling-Art} & Max & Max & Max \\\hline\hline
+\textbf{Verst. Neuronen} & 512 & 2048 & 1024 \\\hline\hline
+\textbf{Genauigkeit} & 0.9872 & 0.9885 & 0.9816 \\\hline
 \end{tabular}\\[5pt]
 {\small *CS-Anzahl: Anzahl der durchgeführten Convolutions und Subsamplings}
 \caption{Genauigkeit abhängig von unterschiedlichen Parametern}
@@ -757,7 +767,7 @@ Zudem existieren, wie in Kapitel \ref{sec:CNNArchitecture} erwähnt, viele unter
 \end{figure}
 
 \section{Resultate}
-Mit einem künstlichen neuronalen Netz wird einem Computerprogramm ermöglicht, wie der Mensch zu denken oder Entscheidungen zu treffen, wobei ein Netz jedoch meistens nur auf eine bestimmte Aufgabe ausgelegt ist. Für einzelne Aufgaben existieren ebenfalls unterschiedliche Architekturen neuronaler Netze, für die Bilderkennung verwendet man beispielsweise Faltungsnetze, welche die relevanten Informationen eines Bildes extrahieren. Objekte können dadurch ähnlich gut klassifiziert werden wie von einem Menschen (vgl. Kapitel \ref{sec:TensorFlow}).
+Ein künstliches neuronales Netz ermöglicht es einem Computerprogramm, wie ein Mensch zu denken oder Entscheidungen zu treffen, wobei ein Netz jedoch meistens nur auf eine bestimmte Aufgabe ausgelegt ist. Für einzelne Aufgaben existieren ebenfalls unterschiedliche Architekturen neuronaler Netze, für die Bilderkennung verwendet man beispielsweise Faltungsnetze, welche die relevanten Informationen eines Bildes extrahieren. Objekte können dadurch ähnlich gut klassifiziert werden wie von einem Menschen (vgl. Kapitel \ref{sec:TensorFlow}).
 
 Aufgrund dieser Genauigkeit haben neuronale Netze auch dort großes Potenzial, wo Fehler auch schwere Folgen haben können:
 
