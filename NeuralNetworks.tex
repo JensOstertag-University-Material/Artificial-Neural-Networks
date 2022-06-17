@@ -660,119 +660,27 @@ TensorFlow ist ein Open-Source Machine-Learning-Framework von Google, das haupts
 Mit TensorFlow hat man die Möglichkeit, sein eigenes neuronales Netz mit selbst gewählten Parametern Schicht für Schicht zusammenzustellen. Das ermöglicht jedem, selbst einen idealen Aufbau zu finden, der die Aufgabe am Besten erfüllt. Das Training, und somit der schwierigere Teil, wird allerdings vom Framework abgenommen.
 
 \subsubsection{Ziffernerkennung}
-Im Folgenden soll TensorFlow dazu verwendet werden, die Daten des MNIST-Datensatzes mit einem CNN\index{Convolutional Neural Network}\index{Faltungsnetz} zu klassifizieren. Anschließend erfolgt ein Vergleich der erreichten Ergebnisse mit denen eines vollständig verbundenen neuronalen Netzes.
+Mit TensorFlow soll nun ein CNN\index{Convolutional Neural Network}\index{Faltungsnetz} erstellt werden, das möglichst viele Daten des MNIST-Datensatzes korrekt klassifizieren kann. Anschließend erfolgt ein Vergleich der Genauigkeit zu einem herkömmlichen neuronalen Netz\index{Neuronales Netz}.
 
-Sämtlicher Code kann unter
+Sämtlicher Code ist unter
 \begin{center}
 \footnotesize\url{https://colab.research.google.com/drive/1n-t1O-3lq-VovD4DCZmhpc9q8Ht4n4At}
 \end{center} 
-abgerufen werden. Alternativ befindet sich am Ende des Kapitels ein QR-Code zum Scannen.
+oder durch Scannen des QR-Codes
+\begin{center}
+\qrcode{https://colab.research.google.com/drive/1n-t1O-3lq-VovD4DCZmhpc9q8Ht4n4At}
+\end{center}
+abrufbar. Der Link verweist auf ein Notebook in Google Colab, welches u. A. das Ausführen von Python-Code in der Cloud ermöglicht.
 
-\subsubsection*{Laden des MNIST-Datensatzes in TensorFlow}
-Mit dem folgenden Code wird das TensorFlow-Framework eingebunden und der MNIST-Datensatz heruntergeladen. Im Anschluss werden die Farbanteile von einem ursprünglichen Bereich von 0 bis 255 auf 0 bis 1 skaliert und eine Daten in Trainings- und Testdatensatz eingeteilt, jeweils mit einer Batch-Größe von 64 Daten. Das bedeutet, dass mit einer Trainings-Iteration 64 Daten trainiert werden.
-\begin{lstlisting}[language=Python]
-import tensorflow as tf
-import tensorflow_datasets as tfds
+\subsubsection*{Aufbau der Netze}
+Das Convolutional Neural Network ist gleich aufgebaut wie in Kapitel \ref{sec:CNNArchitecture} mit jeweils zwei Convolutional- und Subsampling Layers. Die Convolutions wird mit Kernel-Matrizen der Größe $3 \times 3$ durchgeführt. Das anschließende vollständig verbundene Netz besitzt 1024 Neuronen in der versteckten und 10 Neuronen in der Ausgabeschicht.
 
-## Build Datasets
-mnist_builder = tfds.builder('mnist')
-mnist_builder.download_and_prepare()
-datasets = mnist_builder.as_dataset(shuffle_files=False)
-mnist_train_data = datasets['train']
-mnist_test_data = datasets['test']
+Ein Vergleich erfolgt mit einem vollständig verbundenen Netz mit 784 ($28 \times 28$) Eingabe-, 1024 versteckten und 10 Ausgabeneuronen. Der wesentliche Unterschied ist also die vorherige Herausarbeitung von Eigenschaften der einzelnen Ziffern.
 
-mnist_train = mnist_train_data.map(
-    lambda item: 
-    (tf.cast(item['image'], tf.float32)/255.0,
-     tf.cast(item['label'], tf.int32))
-)
-mnist_test = mnist_test_data.map(
-    lambda item: 
-    (tf.cast(item['image'], tf.float32)/255.0, 
-     tf.cast(item['label'], tf.int32))
-)
-tf.random.set_seed(1)
-mnist_train = mnist_train.shuffle(
-    buffer_size=64, 
-    reshuffle_each_iteration=False
-)
-
-mnist_validate = mnist_test.take(10000).batch(64)
-mnist_train = mnist_train.skip(10000).batch(64)
-\end{lstlisting}
-
-\subsubsection*{Aufbau des Netzes}
-Das neuronale Netz soll zunächst gleich aufgebaut sein wie in Abbildung \ref{fig:CNNArchitecture} dargestellt. Dafür werden jeweils zwei Convolutional- und Subsampling-Layer benögigt\index{Convolutional Layer}\index{Subsampling Layer}, gefolgt von einem Flattening Layer\index{Flattening Layer} und zwei vollständig verbundenen Schichten\index{Versteckte Schicht}\index{Hidden Layer}.
-\begin{lstlisting}[language=Python]
-## Build Model
-model = tf.keras.Sequential()
-
-## Convolutional and Pooling Layers
-model.add(tf.keras.layers.Conv2D(
-    filters=8, 
-    kernel_size=(3, 3), 
-    strides=(1, 1), 
-    padding='same', 
-    data_format='channels_last', 
-    name='conv1', 
-    activation='relu'
-))
-model.add(tf.keras.layers.AveragePooling2D(
-    pool_size=(2, 2), 
-    name='pool1'
-))
-model.add(tf.keras.layers.Conv2D(
-    filters=16, 
-    kernel_size=(3, 3), 
-    strides=(1, 1), 
-    padding='same', 
-    data_format='channels_last', 
-    name='conv2', 
-    activation='relu'
-))
-model.add(tf.keras.layers.AveragePooling2D(
-    pool_size=(2, 2), 
-    name='pool2'
-))
-
-## Flattening Layer
-model.add(tf.keras.layers.Flatten())
-
-## Fully Connected Layers
-model.add(tf.keras.layers.Dense(
-    units=1024, 
-    name='fc1', 
-    activation='relu'
-))
-model.add(tf.keras.layers.Dense(
-    units=10, 
-    name='fc2', 
-    activation='softmax'
-))
-
-## Compile the Model
-tf.random.set_seed(1)
-model.build(input_shape=(None, 28, 28, 1))
-model.compile(
-    optimizer=tf.keras.optimizers.Adam(), 
-    loss=tf.keras.losses.SparseCategoricalCrossentropy(), 
-    metrics=['accuracy']
-)
-\end{lstlisting}
-
-\subsubsection*{Training}
-Das erzeugte neuronale Netz wird anschließend mit dem Methodenaufruf
-\begin{lstlisting}[language=Python]
-model.fit(
-    mnist_train, 
-    epochs=5, 
-    validation_data=mnist_validate
-)
-\end{lstlisting}
-trainiert. Die Anzahl der Trainingsiterationen, hier \textit{Epoche} genannt, ist dabei auf 5 begrenzt. 
+Darüber hinaus könnten in beiden vollständig verbundenen Netzen noch weitere Schichten implementiert werden, die zum Beispiel durch zufälliges Deaktivieren von Verbindungen zwischen Neuronen Overfitting\index{Overfitting} vermeiden, der Vergleich soll jedoch so neutral wie möglich gehalten werden.
 
 \subsubsection*{Ergebnisse}
-In Abbildung \ref{fig:TrainingComparison} sind die Trainingsverläufe dieses CNN's\index{Convolutional Neural Network}\index{Faltungsnetz} und eines herkömmlichen neuronalen Netzes\index{Neuronales Netz} über den Verlauf der fünf Epochen dargestellt. Es fällt auf, dass das herkömmliche neuronale Netz immer schlechter abschneidet als das CNN, auch nicht, wenn noch mehr Epochen erlaubt werden. Es sei jedoch angemerkt, dass eine hier erreichte Genauigkeit von etwa 98\% für ein einfaches, vollständig verbundenes neuronales Netz äußerst zufriedenstellend ist. Üblich sind Werte um etwa 90\%.
+In Abbildung \ref{fig:TrainingComparison} sind die Trainingsverläufe dieser beiden neuronalen Netze über den Verlauf von fünf Trainingsepochen dargestellt. Es fällt auf, dass das herkömmliche neuronale Netz\index{Neuronales Netz} immer schlechter abschneidet als das CNN\index{Convolutional Neural Network}\index{Faltungsnetz}, auch nicht, wenn noch mehr Epochen erlaubt wären. Es sei jedoch angemerkt, dass die hier erreichte Genauigkeit von etwa 97.5\% für ein einfaches, vollständig verbundenes neuronales Netz äußerst zufriedenstellend ist. Üblich sind Werte um etwa 90\%.
 
 \begin{figure}[!h]
 \centering
@@ -827,11 +735,6 @@ In Abbildung \ref{fig:TrainingComparison} sind die Trainingsverläufe dieses CNN
 \caption{Trainingsverlauf eines CNN's (\ref{fig:TrainingCNN}) im Vergleich zu einem herkömmlichen neuronalen Netz (\ref{fig:TrainingFCNN})}
 \label{fig:TrainingComparison}
 \end{figure}
-
-\subsubsection*{Code}
-Der folgende Link verweist auf ein Notebook in Google Colab, welches u. A. das Ausführen von Python-Code in der Cloud ermöglicht.\\[5pt]
-{\footnotesize\url{https://colab.research.google.com/drive/1n-t1O-3lq-VovD4DCZmhpc9q8Ht4n4At}}\\[5pt]
-\qrcode{https://colab.research.google.com/drive/1n-t1O-3lq-VovD4DCZmhpc9q8Ht4n4At}
 
 \section{Resultate}
 Mit einem künstlichen neuronalen Netz wird einem Computerprogramm ermöglicht, wie der Mensch zu denken oder Entscheidungen zu treffen, wobei ein Netz jedoch meistens nur auf eine bestimmte Aufgabe ausgelegt ist. Für einzelne Aufgaben existieren ebenfalls unterschiedliche Architekturen neuronaler Netze, für die Bilderkennung verwendet man beispielsweise Faltungsnetze, welche die relevanten Informationen eines Bildes extrahieren. Objekte können dadurch ähnlich gut klassifiziert werden wie von einem Menschen (vgl. Kapitel \ref{sec:TensorFlow}).
