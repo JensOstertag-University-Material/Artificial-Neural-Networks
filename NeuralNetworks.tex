@@ -16,7 +16,7 @@
 
 \title{\textbf{Künstliche neuronale Netze\\Deep Convolutional Neural Networks}}
 \author{Jens Ostertag}
-\date{\today}
+\date{29. Juni 2022}
 
 \lstset{
 basicstyle=\fontsize{10}{10}\selectfont\ttfamily
@@ -380,7 +380,7 @@ Unter Definition der Variablen
 \end{itemize}
 kann diese durch die Formel
 \begin{equation}
-Y = X \odot W \quad \rightarrow \quad Y_{i, j} = \sum\limits_{k=0}^{|W|} \; \sum\limits_{l=0}^{|W_l|} X^p_{i+k, j+l} * W_{k, j}
+Y = X \odot W \quad \rightarrow \quad Y_{i, j} = \sum\limits_{k=0}^{|W|-1} \; \sum\limits_{l=0}^{|W_l|-1} X^p_{i+k, j+l} * W_{k, j}
 \end{equation}
 beschrieben werden, anhand des Schemas und Abbildung \ref{fig:CrossCorrelation2D} ist sie jedoch einfacher zu verstehen.
 
@@ -534,7 +534,6 @@ Subsampling Layer selbst haben keine Gewichte sondern beruhen auf simplen mathem
 \begin{figure}[!h]
 \centering
 \begin{tikzpicture}[thick, main/.style={draw, circle, inner sep=0pt, minimum width=.25cm}]
-
 \def\lgt{1.5};
 \def\xo{0};
 \def\yo{0};
@@ -782,6 +781,6 @@ Auch im medizinischen Bereich unterstützen neuronale Netze Ärzte bei beispiels
 
 \bibliographystyle{gerplain}
 \bibliography{refs}
-\clearpage
-\printindex
+%\clearpage
+%\printindex
 \end{document}
